@@ -1,0 +1,48 @@
+ASSEMBLY_POSTPROCESSING:
+  python: 3.8.3
+ASTER:
+  astral-hybrid: 1.16.3.4
+BBMAP_DEDUPE:
+  BBMAP - clumpify.sh: '39.01'
+BBMAP_FILTER:
+  BBMAP - bbmap.sh: ''
+BBMAP_REFORMAT:
+  BBMAP - reformat.sh: '39.01'
+BLAT:
+  blat: '36'
+BLAT2:
+  blat: '36'
+CUSTOM_DUMPSOFTWAREVERSIONS:
+  python: 3.10.6
+  yaml: '6.0'
+GBLOCKS:
+  gblocks: 0.91b
+IQTREE:
+  iqtree: 2.2.6
+MAFFT:
+  mafft: '7.221'
+MAKE_PRG:
+  python: 3.8.3
+MERGE_TREES:
+  BusyBox: v1.22.1
+PARSE_BLAT_RESULTS:
+  python: 3.8.3
+PEAR:
+  pear: 0.9.6)
+PHYLOGENY_MAKE_ALIGNMENTS:
+  python: 3.8.3
+PREPARE_ADAPTOR:
+  python: 3.8.3
+QUALITY_2_ASSEMBLY:
+  python: 3.8.3
+SED:
+  sed: This is not GNU sed version 4.0
+SPADES:
+  spades: 3.15.5
+TRIMMOMATIC:
+  trimmomatic: '0.39'
+TRIMMOMATIC_CLEAN_PE:
+  trimmomatic: '0.39'
+Workflow:
+  Nextflow: 23.04.4
+  ausarg/pipesnake: '1.2'

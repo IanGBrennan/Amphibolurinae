@@ -1,4 +1,4 @@
-# Amphibolurinae Dragons
+# Generalists Link Peaks in the Adaptive Landscape
 
 <img src="Figures/llustrations/Moloch_hirridus.png" width=50% height=50%>
 
@@ -18,7 +18,7 @@ Included in this repository are the listed directories. Each includes a `README.
 
 ---
 
-### [**Figures**](Figures)/: 
+### [**Figures**](Figures/): 
 + all visualizations generated for this project
 
 ---

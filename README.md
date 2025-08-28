@@ -4,18 +4,18 @@ Our paper addresses a fundamental question in biology: how do new ecologies and 
 
 Included in this repository are the listed directories. Each includes a `README.md` file that explains the files it holds.
 
-**Alignments**: alignment files and locus trees
+[**Alignments**](https://github.com/IanGBrennan/Amphibolurinae/tree/main/Alignments): alignment files and locus trees
 
-**Data**: morphological data for analysis
+[**Data**](https://github.com/IanGBrennan/Amphibolurinae/tree/main/Data): morphological data for analysis
 
-**Figures**: all visualizations generated for this project
+[**Figures**](https://github.com/IanGBrennan/Amphibolurinae/tree/main/Figures): all visualizations generated for this project
 
-**Manuscript**: manuscript files
+[**Manuscript**](https://github.com/IanGBrennan/Amphibolurinae/tree/main/Manuscript): manuscript files
 
-**Presentations**: conference talks
+[**Presentations**](https://github.com/IanGBrennan/Amphibolurinae/tree/main/Presentations): conference talks
 
-**Scripts**: data processing, analysis, and visualization code
+[**Scripts**](https://github.com/IanGBrennan/Amphibolurinae/tree/main/Scripts): data processing, analysis, and visualization code
 
-**Supplement**: supplementary figures and tables referenced in the manuscript
+[**Supplement**](https://github.com/IanGBrennan/Amphibolurinae/tree/main/Supplement): supplementary figures and tables referenced in the manuscript
 
-**Trees**: phylogenetic trees 
+[**Trees**](https://github.com/IanGBrennan/Amphibolurinae/tree/main/Trees): phylogenetic trees 

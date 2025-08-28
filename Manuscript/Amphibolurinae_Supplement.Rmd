@@ -1,0 +1,375 @@
+---
+title: |  
+  |
+  |  Supplemental Information to:
+  |
+  |  Generalists link peaks in the shifting
+  |  adaptive landscape of Australia's dragon lizards
+  |
+  |
+  |
+  |
+  |
+output:
+  bookdown::pdf_document2:
+      toc: false
+      number_sections: false
+      keep_tex: no
+  #    pandoc_args: ["--lua-filter", "figure_caption_patch.lua"]
+  #pdf_document: #default
+  #    toc: false
+  #    number_sections: false
+  #word_document:
+  #    reference_docx: /Users/ianbrennan/My Drive/R.Analyses/rMarkdown_CSLs/Word_Style_Reference_1.docx
+fontsize: 12pt
+linkcolor: orange 
+geometry: margin = 1in
+indent: true
+csl: /Users/ianbrennan/My Drive/R.Analyses/rMarkdown_CSLs/current-biology.csl
+bibliography: /Users/ianbrennan/Documents/GitHub/Tiliquini/Manuscript/Tiliquini_References.bib
+linestretch: 1 # use to adjust line spacing
+header-includes: 
+- \usepackage{float}
+- \usepackage[left]{lineno}
+- \usepackage{graphicx,kantlipsum,setspace}
+- \usepackage{caption}
+- \captionsetup[figure]{font={stretch=1}}
+- \captionsetup[table]{font={stretch=1}}
+#- \linenumbers
+#- \modulolinenumbers[5]
+- \pagenumbering{gobble}
+#- \pagenumbering{arabic}
+- \newcommand{\beginsupplement}{  \setcounter{table}{0} \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}} # renames the supplemental figures as S...
+- \usepackage{lscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \captionsetup[figure]{labelfont={bf},name={Figure},labelsep=period}
+
+---
+
+```{r echo=FALSE,warning=FALSE}
+# this is so that figures are displayed in their proper place in the text, and not all at the end. 
+library(knitr)
+  opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center',
+                 external=TRUE, echo=TRUE, warning=FALSE, fig.pos='H')
+```
+
+Document S1. Figures S1--S12 and Tables S1--S7
+
+```{=tex}
+\beginsupplement
+```
+
+
+<!-- SUPPLEMENTARY FIGURES -->
+
+# Figures
+
+\blandscape
+
+```{r Concatenated, echo=FALSE, eval=T, out.height = '90%', fig.align="center", fig.cap="(ref:SF1)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S1_MCMCTree_PriorPosterior_NodeLabels.pdf")
+```
+(ref:SF1) \small Plots of applied priors (blue), effective priors (pink), and posteriors (green) for each node in the tree indicate reasonable behavior. Node numbers correspond to the phylogeny plotted below, plotted with ape, where n129 is the root node. The effective prior (pink) shows how the interaction of multiple priors can shape the expected ages for a given node. This can be seen when comparing input (blue) and effective
+(pink) priors on any calibrated node (e.g. n129, n130, n134).
+
+
+\newpage
+
+
+```{r FullMCMC, echo=FALSE, fig.pos='H', out.height = '85%', eval=T, fig.cap="(ref:SF2)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S2_Animal_Measurements.pdf")
+```
+(ref:SF2) \small Schematic of morphological measurements taken and outlined in Table S3.
+
+\elandscape
+
+\newpage
+
+```{r LocusInfo, echo=FALSE, fig.pos='H', eval=T, fig.cap="(ref:SF3)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S3_Amphibolurinae_CorrPlot.pdf")
+```
+
+(ref:SF3) \small Plot of size-corrected trait correlations with traits grouped by the morphological module they correspond to (either head, body, limb, or tail). Blues indicate positive correlations, red indicate negative correlations, with saturation indicating increasing intensity. 
+
+\newpage
+
+```{r Animal, echo=FALSE, out.height = '78%', fig.pos='H', eval=T, fig.cap="(ref:SF4)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S4_Amphibolurinae_Sampling.pdf")
+```
+
+(ref:SF4) \small  Locus type and number summarized by sample for newly sequenced samples. Dotted line indicates 50% of targeted sequences recovered. Samples in grey text at left were not included in final analyses. 
+
+\newpage
+
+
+```{r BEASTCI, echo=FALSE, eval=T, fig.align="center", out.height='100%', fig.cap="(ref:SF5)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S5_Agamidae_hASTRAL_ASTRAL4.pdf")
+```
+(ref:SF5) \small Species tree from weighted ASTRAL-hybrid including all samples sequenced and agamid outgroups. Local posterior probabilities are 1 for all nodes except those indicated by an orange circle.
+
+\newpage
+
+```{r PriorPost, echo=FALSE, eval=T, fig.align="center", out.height='90%', fig.cap="(ref:SF6)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S6_Amphibolurinae_Genera_gCF.pdf")
+```
+(ref:SF6) \small Phylogeny of the Amphibolurinae showing intergeneric relationships and support across individual loci. Gene concordance factors (gCF) show the proportion of gene trees which support a given bifurcation. Pie charts on branches indicate the percent of loci which support the presented bifurcation (gCF~1~, orange), one of each of the two other most common resolutions (gCF~2~, blue; gCF~3~, pink) or all other possibilities (gCF~p~, grey). Areas of low concordance (e.g. placement of *Lophosaurus*) indicate topological uncertainty, likely as a result of high levels of incomplete lineage sorting. 
+
+\newpage
+
+\blandscape 
+
+```{r TraitVRTrees, echo=FALSE, eval=T, out.height = '90%', fig.align="center", fig.cap="(ref:SF7)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S7_Trait_Variance.pdf")
+```
+(ref:SF7) \small Individual traits show different levels of variance among amphibolurine species, with the greatest variances occurring in size (geometric mean) and tail length. Some traits, such as hand length and upper arm length show vanishingly small variation once corrected for absolute size. (Right) Traits with higher variances are more likely to fit the fabric model, which better partitions large changes in trait values. 
+
+\elandscape
+
+\newpage
+
+```{r ModelFits, echo=FALSE, eval=T, fig.align="center", out.height='80%', fig.cap="(ref:SF8)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S8_VTT_LTT.pdf")
+```
+(ref:SF8) \small The Amphibolurinae hypervolume expands early and late in their evolution, with a period of niche packing in the Miocene. Diversification and morphological expansion are coupled in the early radiation of dragon lizards, but are largely decoupled from the Miocene onwards. 
+
+\newpage
+
+```{r ElabInn, echo=FALSE, eval=T, fig.align="center", out.height='80%', fig.cap="(ref:SF9)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S9_RF_PhyloEM_Optima5.pdf")
+```
+(ref:SF9) \small Adaptive peaks corresponding to morphological regimes identified under a multi-optima OU model in PhyloEM and applied to ancestral taxa using randomForests. (Bottom) Tree shows the preferred 5 regime model estimated from all 19 size corrected morphological traits, with regime shifts denoted by small white circles. (Top) Tree shows the preferred 5 regimes including likelihoods for ancestors as estimated by randomForest. The amphibolurine MRCA is estimated as a Hypsilurus/Lophosaurus-like arboreal dragon and the Australian MRCA is estimated as a semiarboreal generalist lizard (both indicated with black outline to pie).  
+
+\newpage
+
+```{r, echo=FALSE, eval=T, fig.align="center", out.height='80%', fig.cap="(ref:SF10)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S10_RF_PhyloEM_Optima12.pdf")
+```
+(ref:SF10) \small Adaptive peaks corresponding to morphological regimes identified under a multi-optima OU model in *PhyloEM* and applied to ancestral taxa using randomForests. (Bottom) Tree shows the preferred 12 regime model estimated from the first 6 PC axes of the morphological data, with regime shifts denoted by small white circles. (Top) Tree shows the preferred 12 regimes including likelihoods for ancestors as estimated by randomForest. The amphibolurine MRCA is estimated as a *Hypsilurus*-like arboreal dragon and the Australian MRCA is estimated as a semiarboreal lizard (both indicated with black outline to pie).
+
+\newpage
+
+```{r, echo=FALSE, eval=T, fig.align="center", out.height='80%', fig.cap="(ref:SF11)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S11_HeatMap_Euclidean_TreeOrder.pdf")
+```
+(ref:SF11) \small Heatmap of multivariate morphological euclidean distance among all pairs of amphibolurines. This presentation highlights the conservative evolution of *Tympanocryptis* along with the relative dissimilarity of novel species like *Chlamydosaurus* (more similar to *Lophosaurus*/*Hypsilurus*), *Ctenophorus aurita* (more similar to *Tympanocryptis*), and Moloch. Black boxes along the diagonal delineate genera or clades of morphologically similar taxa. 
+
+\newpage
+
+```{r, echo=FALSE, eval=T, fig.align="center", out.height='100%', fig.cap="(ref:SF12)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S12_Distance2RegimeCentroid.pdf")
+```
+(ref:SF12) \small See caption below.
+
+
+\small \textbf{Figure S12.} Multivariate Euclidean distance estimated between each extant species and estimated optima, as well as to the amphibolurine MRCA. Tree at bottom is colored according to the k = 5 model of morphological optima. Lollipop plots above show morphological distance between each extant species and the amphibolurine MRCA (black), primarily arboreal regime 1 (red), regime 2 (blue; *Tympanocryptis*), the primarily generalist regime 3 (yellow), regime 4 (green; *Moloch*), and regime 5 (orange; *Ctenophorus*). Based on this metric and our measured traits, the amphibolurine MRCA was most morphologically similar to *Intellagama*, *Physignathus*, and *Chlamydosaurus*. Terrestrial forms like *Ctenophorus aurita*, the *Ctenophorus adelaidensis* group, and *Tympanocryptis* are likely highly derived and morphologically distinct from the MRCA.
+
+\newpage
+
+<!-- SUPPLEMENTARY TABLES -->
+
+# Software
+
+All software and versions used for *pipesnake* V.12 assembly and analysis of molecular data.
+```{bash, eval=F, size="tiny"}
+ASSEMBLY_POSTPROCESSING:
+  python: 3.8.3
+ASTER:
+  astral-hybrid: 1.16.3.4
+BBMAP_DEDUPE: BBMAP_FILTER: BBMAP_REFORMAT:
+  BBMAP - clumpify.sh: '39.01'
+  BBMAP - reformat.sh: '39.01'
+  BBMAP - bbmap.sh: ''
+BLAT:
+  blat: '36'
+CUSTOM_DUMPSOFTWAREVERSIONS:
+  python: 3.10.6
+  yaml: '6.0'
+GBLOCKS:
+  gblocks: 0.91b
+IQTREE:
+  iqtree: 2.2.6
+MAFFT:
+  mafft: '7.221'
+MAKE_PRG:
+  python: 3.8.3
+MERGE_TREES:
+  BusyBox: v1.22.1
+PARSE_BLAT_RESULTS:
+  python: 3.8.3
+PEAR:
+  pear: 0.9.6)
+PHYLOGENY_MAKE_ALIGNMENTS:
+  python: 3.8.3
+PREPARE_ADAPTOR:
+  python: 3.8.3
+QUALITY_2_ASSEMBLY:
+  python: 3.8.3
+SED:
+  sed: This is not GNU sed version 4.0
+SPADES:
+  spades: 3.15.5
+TRIMMOMATIC:
+  trimmomatic: '0.39'
+TRIMMOMATIC_CLEAN_PE:
+  trimmomatic: '0.39'
+Workflow:
+  Nextflow: 23.04.4
+  ausarg/pipesnake: '1.2'
+```
+
+
+\newpage
+
+# Tables
+
+```{r, include=F, message=F, warning=F}
+library(dplyr)
+library(gt); 
+library(kableExtra); options(knitr.kable.NA = '---')
+library(googlesheets4)
+gs4_deauth()
+sampinfo <- read.csv("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Table.S1_Agamidae_SampleInfo.csv")
+sampinfo <- dplyr::select(sampinfo, Family, Subfamily, Genus, Species, RegNo, AHE, gene, uce, total_loci, Source,
+                          -filename, -Targets, -Order, -HigherOrder)
+```
+
+\blandscape
+
+### Molecular Sampling (Table S1)
+
+```{r, echo=F, eval=T}
+# Here's a more basic version
+kbl(sampinfo, longtable=T, booktabs=T, linesep="") %>% 
+#  add_header_above(c("Microhylidae"=6)) %>%
+  kable_styling(latex_options=c("repeat_header"),
+                font_size=6)
+```
+
+
+\elandscape
+
+### Fossil Calibrations (Table S2)
+
+| Fossil Information	|   Calibration	|   Split/Position	|   Source |
+|---------------------|---------------|-------------------|----------|
+| Uniform—Sophineta	|   'B(2.38,2.55)'	|   Lepidosauria (Sphenodon + Squamata)	|   see below |
+| Uniform—Secondary	|   'B(0.50,0.80)'	|   Amphibolurinae + (Agaminae + Draconinae)	|   Burbrink et al. 2020; Title et al. 2024 |
+| Uniform—Riversleigh 'Physignathus'	|   'B(0.17,0.50)'	|   Hypsilurus + Remaining Australian Amphibolurinae	|   Covacevich 1990 |
+
+*Note*. The root divergence between lepidosaurs (Sphenodon + squamates) is based on the fossil taxa Sophineta cracoviensis (Evans & Bialynicka, 2009), Megachirella wachtleri (Renesto & Posenato, 2003), and the Vellberg Jaw (Jones et al., 2013). These taxa represent stem squamates and rhynchocephalians, and so provide a soft lower bound on the crown divergence of Lepidosauria, with a soft upper bound provided by Protosaurus speneri (von Meyer, 1832).
+
+\blandscape
+
+\newpage
+
+### Morphological Measurements (Table S3)
+
+| No. | Measurement         | Abbreviation |                                                 Method |
+|-----|---------------------|-------------:|-------------------------------------------------------:|
+| 1   | Snout-vent length   |          SVL |                 From the tip of the snout to the vent. |
+| 2   | Snout-axilla length |          SAL |              From the tip of the snout to the midpoint |
+|     |                     |              |                of the crease between the fore-limb and |
+|     |                     |              |                       the body on the ventral surface. |
+| 3   | Inter-limb length   |          ILL |                  Midpoint of the crease on the ventral |
+|     |                     |              |                surface where the fore-limb connects to |
+|     |                     |              |                the body, to the midpoint of the crease |
+|     |                     |              |             on the ventral surface where the hind-limb |
+|     |                     |              |                                  connects to the body. |
+| 4   | Body width          |           BW |               From one lateral side of the body to the |
+|     |                     |              |      other, where possible at the midpoint of the ILL. |
+| 5   | Pelvic width        |           PW |                 From the midpoint of the crease on the |
+|     |                     |              |               ventral surface where the left hind limb |
+|     |                     |              |               connects to the body, to the midpoint of |
+|     |                     |              |                the crease on the ventral surface where |
+|     |                     |              |              the right hind limb connects to the body. |
+| 6   | Pelvic height       |           PH |            From the top of the dorsal surface were the |
+|     |                     |              |          PW was measured, to the bottom of the ventral |
+|     |                     |              |                     surface where the PW was measured. |
+| 7   | Head width          |           HW |                       Widest part of the head from one |
+|     |                     |              |                 dorsal-lateral edge to the other edge. |
+| 8   | Head length         |           HL |         From the nose tip, to the anterior of the ear. |
+| 9   | Snout length        |           SN |     From the nasal opening to the anterior of the eye. |
+| 10  | Eye diameter        |           ED |                 From one side of the eye to the other. |
+| 11  | Head depth          |           HD |                From the top of the tallest part of the |
+|     |                     |              |              head on the dorsal surface, to the bottom |
+|     |                     |              |                  of the ventral surface under the jaw. |
+| 12  | Tail width          |           TW |                         Measured at the vent, from one |
+|     |                     |              |                 dorsal-lateral edge to the other edge. |
+| 13  | Tail length         |           TL |         Measured from the vent to the tip of the tail. |
+| 14  | Fore-limb length    |          FLL |              Measured fully extended from the midpoint |
+|     |                     |              |             of the crease on the ventral surface where |
+|     |                     |              |                   the front limb connects to the body, |
+|     |                     |              |             to the end of longest toe (claw included). |
+| 15  | Front foot          |        FFOOT |                From the base of the foot to the end of |
+|     |                     |              |                       the longest toe (claw included). |
+| 16  | Lower front limb    |          LFL |          Measured from the base of the lower fore limb |
+|     |                     |              |   to the juncture where the limb meets the front foot. |
+| 17  | Upper front limb    |          UFL |        Measured from the crease on the ventral surface |
+|     |                     |              |              where the fore limb connects to the body, |
+|     |                     |              |                    to the end of the lower front limb. |
+| 18  | Hind-limb length    |          HLL |                 From the midpoint of the crease on the |
+|     |                     |              |           ventral surface where the hind limb connects |
+|     |                     |              | to the body, to the end of longest toe (claw included) |
+| 19  | Hind foot           |        HFOOT |                  From the base of the hind foot to the |
+|     |                     |              |                 end of the longest toe (claw included) |
+| 20  | Lower hind limb     |          LHL |                Measured from the top of the knee joint |
+|     |                     |              |              to the heel juncture where the limb meets |
+|     |                     |              |                                        the front foot. |
+| 21  | Upper hind limb     |          UHL |                Measured from the crease on the ventral |
+|     |                     |              |                surface where the hind limb connects to |
+|     |                     |              |                      the body, to the end of the knee. |
+
+**Table S3. Morphological measurements collected (21).**
+
+\newpage
+
+| No. | Measurement      | Shorthand     |                                   Method |
+|-----|------------------|:--------------|-----------------------------------------:|
+| 3   | Interlimb length | Interlimb     |                             see Table S3 |
+| 4   | Body width       | Body_Width    |                             see Table S3 |
+| 5   | Pelvic width     | Pelvic_Width  |                             see Table S3 |
+| 6   | Pelvic height    | Pelvic_Height |                             see Table S3 |
+| 7   | Head width       | Head_Width    |                             see Table S3 |
+| 9   | Snout length     | Snout_Eye     |                             see Table S3 |
+| 10  | Eye diameter     | Eye_Diameter  |                             see Table S3 |
+| 11  | Head depth       | Head_Depth    |                             see Table S3 |
+| 12  | Tail width       | Tail_Width    |                             see Table S3 |
+| 13  | Tail length      | Tail_Length   |                             see Table S3 |
+| 17  | Upper front limb | Upper_Arm     |                             see Table S3 |
+| 16  | Lower front limb | Lower_Arm     |                             see Table S3 |
+| 15  | Front foot       | Hand          |                             see Table S3 |
+| 21  | Upper hind limb  | Upper_Leg     |                             see Table S3 |
+| 20  | Lower hind limb  | Lower_Leg     |                             see Table S3 |
+| 19  | Hind foot        | Foot          |                             see Table S3 |
+| 22  | Neck length      | Neck          |               Snout_Axilla - Head_Length |
+| 23  | Posterior skull  | Pos_Skull     | Head_Length - (Snout_Eye + Eye_Diameter) |
+| 24  | Pelvic gap       | Pelvic_Gap    |  Snout_Vent - (Interlimb + Snout_Axilla) |
+
+**Table S3. Final morphological traits used for phenotypic analyses (19).**
+
+\newpage
+
+\blandscape
+
+### BayesTraits Model Fitting Results (Table S4)
+
+```{r, echo=F, eval=T}
+# Here's a more basic version
+models <- read.csv("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Table.S4_BayesTraits_MarginalLikelihoods.csv")
+kbl(models, longtable=T, booktabs=T, linesep="") %>% 
+#  add_header_above(c("Microhylidae"=6)) %>%
+  kable_styling(latex_options=c("repeat_header"),
+                font_size=6)
+```
+
+\elandscape
+
+# Supplemental References
+
+::: {#refs}
+:::
+
+\newpage
+
+

@@ -209,12 +209,13 @@ extract.variance <- function(trait.time.obj, plot=c("cumulative", "relative", "s
 ############################################################################
 
 # Function that packages the PCA and Hypervolume formation
-reduce.hypervolume <- function(y, axes) hypervolume::hypervolume(prcomp(y)$x[,1:axes])
+reduce.hypervolume <- function(y, axes) hypervolume::hypervolume(prcomp(y[2:ncol(y)])$x[,1:axes]) # previously was prcomp(y) but that included the "time" column!
 
 ############################################################################
 
 # Fit PCA/Hypervolume and extract the volume measurement in parallel
 extract.volume <- function(obj, PCs, parallel, plot=T){
+  start.time <- Sys.time()
   # turn the object into a list of dataframes clustered by timeslice
   tto.list <- NULL
   utime <- unique(obj$time)
@@ -242,6 +243,10 @@ extract.volume <- function(obj, PCs, parallel, plot=T){
   # plot the results quickly
   if(plot==T){plot(vdf$volume ~ vdf$time.rev, type="l")}
   
+  # report the amount of time taken
+  end.time <- Sys.time()
+  print(paste("Volume estimates took:",round(end.time-start.time,2),"seconds"))
+
   # return the volume-at-time dataframe
   return(vdf)
 }

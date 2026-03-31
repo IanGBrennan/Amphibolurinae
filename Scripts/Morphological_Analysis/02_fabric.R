@@ -1,6 +1,6 @@
 setwd("/Users/ianbrennan/Documents/GitHub/Amphibolurinae")
 
-source("Scripts/fabric_Functions.R")
+source("Scripts/Analysis_Helper_Scripts/fabric_Functions.R")
 
 ############################################################################
 
@@ -19,7 +19,7 @@ nodekey <- fabricMD5("/Applications/BayesTraitsV4.1.2/Amphibolurinae_Fabric_Trai
 
 # process a single trait and plot the fabric results
 ul.res <- fabricProcess(fpp.path = "/Applications/BayesTraitsV4.1.2/Amphibolurinae_Fabric_Traits/Run01/UpperLeg_Run01_TRAIT.txt.VarRates.txt.csv",
-                        phy = agam.tree, trait.name = "Upper Leg")
+                                                phy = agam.tree, trait.name = "Upper Leg")
 fabricPlot(process.obj = ul.res, phy = agam.tree, trait.name = "Upper Leg", plot.type="phylogram")
 # circles denote shifts in the evolvability (v), red increases, blue decreases
 # colored branches denote directional trends (b) in traits, red increases, blue decreases
@@ -215,6 +215,15 @@ for (k in 1:length(all.traits)){
 }
 
 
+#######################################################################
+
+# combine the extant and estimated ancestral traits together
+
+# isolate traits (exclude Genus, Genus_species)
+LSR.anc <- allLSR[,1:19]
+# combine observed and ancestral traits into a single dataframe
+LSR.anc <- dplyr::bind_rows(LSR.anc, ancestors)
+
 ############################################################################
 
 
@@ -254,6 +263,21 @@ fabricTraitgram(process.obj=dplyr::filter(chain.sum, trait == "PelvicHeight"),
 fabricTraitgram(process.obj=dplyr::filter(chain.sum, trait == "BodyWidth"),
                 phy=agam.tree, trait.name="BodyWidth", trait=unLSR.anc, focus="tip", 
                 tip.spread=c("Moloch_horridus"))
+
+############################################################################
+
+
+# Present plots that show the trajectory of trait evolution under the 
+# fabric model vs. BM as traitgram/phenograms
+
+fabricPhenogram(process.obj=dplyr::filter(chain.sum, trait == "Size"),
+                phy=agam.tree, trait.name="Size", trait=LSR.anc, compareBM=T)
+
+fabricPhenogram(process.obj=dplyr::filter(chain.sum, trait == "TailLength"),
+                phy=agam.tree, trait.name="TailLength", trait=LSR.anc, compareBM=T)
+
+
+
 
 ############################################################################
 

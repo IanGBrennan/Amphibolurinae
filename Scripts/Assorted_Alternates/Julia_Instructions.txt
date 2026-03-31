@@ -1,0 +1,47 @@
+# following basic instructions from:
+# https://docs.juliahub.com/Phylo/9tAbj/0.4.21/man/plotting/
+# https://hmorlon.github.io/PANDA.jl/dev/clads/tutorial/
+# more info here: https://hmorlon.github.io/PANDA.jl/dev/
+
+# Open Julia from Applications
+
+using Phylo, Plots
+# WARNING: package Phylo blocks PANDA's load_tree function and causes an error
+# so don't load both of them in the same workspace
+
+# set linecolor for plots
+default(linecolor = :black, size = (400, 400)) # looks nicer with black lines
+
+# read in tree
+enew = open(parsenewick, Phylo.path("/Users/ianbrennan/Documents/GitHub/Egernia_Evolution/Trees/Egernia_MCMCtree.tre"))
+
+# ladderize the branches
+!sort(enew, rev=true)
+
+# plot the tree
+plot(enew, size=(400,600), showtips=true)
+
+# or try a fan
+plot(enew, treetype=:fan)
+
+using PANDA
+
+# read in a tree for PANDA/ClaDS
+etree = load_tree("/Users/ianbrennan/Documents/GitHub/Egernia_Evolution/Trees/Egerniinae_MCMCtree.tre")
+
+# run ClaDS with default parameters
+cout = infer_ClaDS(etree, print_state=100)
+
+# save ClaDS output in R format
+save_ClaDS_in_R(cout, "/Users/ianbrennan/Documents/GitHub/Egernia_Evolution/ClaDS/Egernia_ClaDS.Rdata")
+
+# plot the ClaDS result
+plot_CladsOutput(cout)
+plot_CladsOutput(cout, options="type='fan'") # as a fan
+
+# plot the Diversity Through Time
+plot_CladsOutput(cout, method="DTT")
+
+
+# clear a variable
+testo=rand(10, 10)

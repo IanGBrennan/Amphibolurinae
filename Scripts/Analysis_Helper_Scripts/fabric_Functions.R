@@ -3,6 +3,7 @@
 
 require(ape)
 require(phytools)
+require(patchwork)
 
 ###############################################################################
 
@@ -712,6 +713,77 @@ fabricPathgram <- function(process.obj, phy, trait.names,
   return(pathgram)
 }
 
+###############################################################################
+
+fabricPhenogram <- function(process.obj, phy, trait.name, 
+                            lsize=2, trait=NULL, compareBM=T){
+  require(RColorBrewer)
+  require(dplyr)
+  
+  if(is.null(trait) | nrow(trait) <= Ntip(phy)){stop("trait dataframe must include ancestral trait estimates")}
+  
+  # build a dataframe of basic tree statistics
+  ndel <- data.frame(edge = 1:nrow(phy$edge),
+                     node.parent = phy$edge[,1],
+                     node.child  = phy$edge[,2],
+                     length = phy$edge.length,
+                     timestart = sapply(phy$edge[,1], function(x) nodeheight(phy, x))-max(nodeHeights(phy)),
+                     timestop  = sapply(phy$edge[,2], function(x) nodeheight(phy, x))-max(nodeHeights(phy)),
+                     parent.name = paste0("n",phy$edge[,1]))
+  ndel$child.name <- sapply(ndel$node.child, function(x) ifelse(x <= Ntip(phy), phy$tip[[x]], paste0("n",x)))
+  ndel$rate <- 1
+  
+  # select and rename the parameters we're interested in
+  focus.params <- dplyr::select(process.obj, scale.mean, parameter, node.parent, node)
+  colnames(focus.params) <- c("scale","parameter","node.parent","node.child")
+  
+  # combine the dataframes to get all the info we're after
+  ndel2 <- dplyr::full_join(ndel, focus.params)
+  
+  # provide the trait start and stop times (for the y axis)
+  tdf <- dplyr::select(trait, trait.name)
+  ndel2$traitstart <- sapply(ndel2$parent.name, function(x) tdf[x,])
+  ndel2$traitstop  <- sapply(ndel2$child.name,  function(x) tdf[x,])
+  
+  # plot the phenogram under fabric
+  pheno.fabric <- ggplot() +
+    geom_segment(data=ndel2,
+                 aes(x=timestart,y=traitstart,xend=timestop,yend=traitstop), lwd=lsize, alpha=0.5, 
+                 color="#706f6f", lineend="round") +
+    xlab("time before present") + ylab(trait.name) +
+    theme_classic() + ggtitle(paste(trait.name,"under fabric"))
+  
+  ndel3 <- ndel
+  
+  # if you want to compare the fabric phenogram against one under BM
+  if(compareBM==T){
+    # make a new trait dataframe
+    tdf.bm <- dplyr::select(trait[1:Ntip(phy),], trait.name)
+    
+    # estimate ancestral states under Brownian Motion and add them to the trait df
+    tdf.anc <- data.frame(fastAnc(phy, setNames(tdf.bm[,1], rownames(tdf.bm))))
+    rownames(tdf.anc) <- paste0("n",rownames(tdf.anc)); colnames(tdf.anc) <- trait.name
+    tdf.bm <- rbind(tdf.bm, tdf.anc)
+    
+    ndel3$traitstart <- sapply(ndel3$parent.name, function(x) tdf.bm[x,])
+    ndel3$traitstop  <- sapply(ndel3$child.name,  function(x) tdf.bm[x,])
+    
+    pheno.bm <- ggplot() +
+      geom_segment(data=ndel3,
+                   aes(x=timestart,y=traitstart,xend=timestop,yend=traitstop), lwd=lsize, alpha=0.5, 
+                   color="#706f6f", lineend="round") +
+      xlab("time before present") + ylab(trait.name) +
+      theme_classic() + ggtitle(paste(trait.name,"under BM"))
+    
+    
+    # put the two plots side-by-side
+    combined <- pheno.bm + pheno.fabric
+  }
+  # if you only wanna plot the single fabric plot
+  if(compareBM==F){combined <- pheno.fabric}
+
+  return(combined)
+}
 
 
 

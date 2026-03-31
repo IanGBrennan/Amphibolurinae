@@ -33,8 +33,8 @@ rownames(rfdata) <- rfdata$Genus_species
 rfdata.eco <- rfdata[,c(1:19,22)]
 
 # add in the regime states estimated from PhyloEM
-#rfdata.reg <- rfdata[,c(1:19,28)] # opt6
-rfdata.reg <- rfdata[,c(1:19,29)] # opt11
+#rfdata.reg <- rfdata[,c(1:19,22)] # opt6
+rfdata.reg <- rfdata[,c(1:19,23)] # opt11
 colnames(rfdata.reg)[[20]] <- "Regime"
 rfdata.reg$Regime <- as.factor(rfdata.reg$Regime)
 

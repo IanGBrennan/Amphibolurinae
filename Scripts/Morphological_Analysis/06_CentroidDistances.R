@@ -140,6 +140,9 @@ small.pca <- pca.scores %>%
                             "Cryptagama_aurita",
                             "Tympanocryptis_cephalus",
                             "Diporiphora_superba",
+                            "Amphibolurus_norrisi",
+                            "Gowidon_longirostris",
+                            "Tropicagama_temporalis",
                             "center_all"))
 ggplot() +
   geom_point(data=small.pca, aes(x=Comp.1,y=Comp.2, color=name))

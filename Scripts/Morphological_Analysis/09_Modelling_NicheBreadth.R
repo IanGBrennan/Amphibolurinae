@@ -255,7 +255,7 @@ gen.cust <-matrix(c(0,1,1,1,
                     1,2,0,0),4)
 fit.CUST <- fitMk(tree=agam.tree, x=genspec, model=gen.cust); plot(fit.CUST,width=T,color=T); AIC(fit.CUST)
 
-AIC.df <- AIC(fit.ER, fit.ARD, fit.SYM, fit.GENSPC2)
+AIC.df <- AIC(fit.ER, fit.ARD, fit.SYM, fit.GEN, fit.GENSPC2)
 #AIC.df <- AIC(fit.ER, fit.SYM, fit.GEN, fit.GENSYM, fit.GENSPC, fit.GENSPC2, fit.GENSPC3, fit.GENSPC4, fit.GENSPC5)
 AIC.df$W <- aic.w(AIC.df$AIC)
 AIC.df[order(AIC.df$W,decreasing=T),]

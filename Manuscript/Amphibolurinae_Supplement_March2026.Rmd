@@ -1,0 +1,622 @@
+---
+title: |  
+  |
+  |  Supplemental Information to:
+  |
+  |  Generalists link peaks in the shifting
+  |  adaptive landscape of Australia's dragon lizards
+  |
+  |
+  |
+  | Document S1. Figures S1--S14 and Tables S1--S4
+  |
+output:
+  bookdown::pdf_document2:
+      toc: true
+      number_sections: false
+      keep_tex: no
+  #    pandoc_args: ["--lua-filter", "figure_caption_patch.lua"]
+  #pdf_document: #default
+  #    toc: false
+  #    number_sections: false
+  #word_document:
+  #    reference_docx: /Users/ianbrennan/My Drive/R.Analyses/rMarkdown_CSLs/Word_Style_Reference_1.docx
+fontsize: 12pt
+linkcolor: orange 
+geometry: margin = 1in
+indent: true
+csl: /Users/ianbrennan/My Drive/R.Analyses/rMarkdown_CSLs/current-biology.csl
+bibliography: /Users/ianbrennan/Documents/GitHub/Tiliquini/Manuscript/Tiliquini_References.bib
+linestretch: 1 # use to adjust line spacing
+header-includes: 
+- \usepackage{float}
+- \usepackage[left]{lineno}
+- \usepackage{graphicx,kantlipsum,setspace}
+- \usepackage{caption}
+- \captionsetup[figure]{font={stretch=1}}
+- \captionsetup[table]{font={stretch=1}}
+#- \linenumbers
+#- \modulolinenumbers[5]
+- \pagenumbering{gobble}
+- \pagenumbering{arabic}
+- \newcommand{\beginsupplement}{  \setcounter{table}{0} \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}} # renames the supplemental figures as S...
+- \usepackage{lscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \captionsetup[figure]{labelfont={bf},name={Figure},labelsep=period}
+---
+
+```{r echo=FALSE,warning=FALSE}
+# this is so that figures are displayed in their proper place in the text, and not all at the end. 
+library(knitr)
+  opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center',
+                 external=TRUE, echo=TRUE, warning=FALSE, fig.pos='H')
+```
+
+\newpage
+
+
+```{=tex}
+\beginsupplement
+```
+
+
+<!-- SUPPLEMENTARY FIGURES -->
+
+# Supplementary Information
+
+## Molecular Taxon Sampling
+We assembled a sequence-capture dataset across 309 Amphibolurinae representing 120 of 136 currently recognized species, with a focus on Australian taxa (115 of 117 spp.). This sampling covers all 16 genera and many recognized subspecies (Table S1). We included outgroup representatives from all agamid subfamilies and used tuatara (Sphenodon punctatus) and chicken (Gallus gallus) to root the tree (368 total samples).
+
+The following Amphibolurinae taxa were unsampled in our molecular efforts:  
+*Diporiphora convergens*\* STORR, 1974  
+*Hypsilurus binotatus* (MEYER, 1874)  
+*Hypsilurus bruijnii* (PETERS & DORIA, 1878)  
+*Hypsilurus capreolatus* KRAUS & MYERS, 2012  
+*Hypsilurus geelvinkianus* (PETERS & DORIA, 1878)  
+*Hypsilurus godeffroyi* (PETERS, 1867)  
+*Hypsilurus hikidanus* MANTHEY & DENZER, 2006  
+*Hypsilurus longi* (MACLEAY, 1877)  
+*Hypsilurus macrolepis* PETERS, 1872  
+*Hypsilurus modestus* (MEYER, 1874)  
+*Hypsilurus nigrigularis* (MEYER, 1874)  
+*Hypsilurus ornatus* MANTHEY & DENZER, 2006  
+*Hypsilurus papuensis* (MACLEAY, 1877)  
+*Hypsilurus schultzewestrumi* (URBAN, 1999)  
+*Hypsilurus tenuicephalus* MANTHEY & DENZER, 2006  
+*Tympanocryptis uniformis*\* MITCHELL, 1948  
+
+\*These species were described from a single specimen and have not been confirmed via genetic data (Melville & Wilson, 2019).
+
+## Molecular Data
+Sample collection and laboratory preparation, including extraction, shearing, size selection, library generation, and hybridization capture were completed as part of the Australian Amphibian and Reptile Genomics initiative ([AusARG](https://ausargenomics.com/)) under the Phylogenomics Working Group following the protocol outlined in Tiatragul et al. (2023). Raw sequence data for newly sampled taxa are available from the [BioPlatforms Australia Data Portal](https://data.bioplatforms.com/dataset/?ext_search_by=&q=agamidae&organization=ausarg&sequence_data_type=Illumina+Capture&sort=score+desc%2C+metadata_modified+desc&ext_bbox=). Assembled target sequences organized by sample (pseudo-reference genomes; PRGs) are available from [https://github.com/iangbrennan/Amphibolurinae](https://github.com/iangbrennan/Amphibolurinae). 
+
+We used the *pipesnake* v1.2 workflow (Brennan et al. 2024) [https://github.com/AusARG/pipesnake](https://github.com/AusARG/pipesnake) to handle, process, assemble, and align our molecular data, estimate gene trees and a species tree. All software employed for individual tasks are indicated in the Supplementary file software_versions.yml. *pipesnake* is a highly reproducible and flexible workflow that provides consistent results. 
+
+In brief, the pipeline concatenates individual read files, then removes duplicate reads via BBMAP (Bushnell 2014), trims adapters and barcodes with TRIMMOMATIC (Bolger et al. 2014), identifies read pairs with PEAR (Zhang et al. 2014), removes off-target reads with BBMAP, assembles reads to contigs with SPAdes (Prjibelski et al. 2020), maps contigs to targets with BLAT (Kent 2002) and extracts the best hit for each target, carries out preliminary alignments with MAFFT (Katoh & Standley 2013), before refining the alignments with GBLOCKS (Talavera & Castresana 2007), estimates locus trees with IQ-TREE2 (Minh et al. 2020), and a species tree with weighted ASTRAL hybrid (Zhang & Mirarab 2022).
+
+## Additional Sampling
+To take advantage of all available morphological and phylogenetic information we incorporated three additional New Guinean *Hypsilurus* species into our dated tree used for trait evolution analyses. *Hypsilurus godeffroyi*, *H. papuensis*, and *H. nigrigularis* were added to our MCMCTree output using bind.tip in phytools (Revell 2024), based on the topology and ages estimated from a recent phylogenomic investigation of Squamata (Title & Singhal et al. 2024). 
+
+## Phylogenomics of the Amphibolurinae
+Dragon lizards (Agamidae) are a charismatic and diverse group of ~600 species found across Africa, Asia, and Oceania. They are diurnal and often brightly colored and territorial, making them visible and familiar. The Amphibolurinae subfamily extends out of Asia into Australia and New Guinea, where they reach ecomorphological extremes including burrowing species that live along the salt-crusted edges of desert lake-beds and semiaquatic species that patrol the eastern watercourses. While species such as the bearded dragons and frilled-neck lizard are well-known, phylogenetic understanding of the group has been limited in genetic scope and focused within genera (Macey et al. 2000; Melville et al. 2001, Hugall et al. 2008; Shoo et al. 2008; Melville et al. 2018; Chaplin et al. 2020; Fenker et al. 2024). Our new sequence-capture dataset provides a well-supported estimate of the relationships among all 17 amphibolurine genera and more than 88% of described species. 
+
+Relationships among some (Streicher et al. 2016; Burbrink et al. 2020; Title et al. 2024) or all (Welt & Raxworthy 2022; Scarpetta et al. 2025) agamid subfamilies have been estimated from different phylogenomic datasets, but have rarely been discussed. Our topology differs from that of Welt & Raxworthy (2022) and Scarpetta et al. (2025) in the placement of the Leiolepidinae and Uromastycinae at the base of the tree, and the stepwise (rather than sister) relationship between the Hydrosaurinae and Amphibolurinae. The topology we present has biogeographic implications, suggesting an Asian and not African origin for the group. This is further supported by fossil evidence of the Priscagamidae which were stem-acrodonts of east Asia, and the ~99 myo *Protodraco* from Myanmar (Wagner et al. 2021) which is potentially the oldest known acrodont. The debate over an Asian or African origin of agamids is mirrored in other Australian squamate groups such as pythons (Esquerre et al. 2020), monitor lizards (Brennan et al. 2021), and elapid snakes (Keogh 1998). One possible explanation for differences in the subfamily topology is the expanded molecular dataset presented here. Reanalyzing a UCE-only dataset however, returns a topology identical to our SqCL estimate, suggesting other factors (e.g. alignment parameters, substitution models) are likely causing the differences in topology.
+
+While the Amphibolurinae as a group date back to the Cretaceous, their living diversity is less than half that age. The split between the sole Asian species Physignathus and the remaining Australo-Papuan diversity occurred around the Eocene/Oligocene transition, and was closely followed by rapid diversification over the next ten million years (Fig.1). This is consistent with paleontological evidence from Australia which suggests fossils assignable to Intellagama are relatively common in the early-to-middle Miocene deposits of the Riversleigh World Heritage Area (Covacevich et al. 1990). The rapid divergence of Australian species from their forest-dwelling relatives in New Guinea resulted in a series of very rapid branching events which can prove challenging for phylogenetic methods. These deep and rapid splits occur over just a few hundred thousand years and highlight a period of dramatic ecomorphological change. Following this period of radiation, the diversification of the group is far slower, more homogeneous, and dictated by three major groups: Ctenophorus (41 spp.), Diporiphora (28 spp.), and Tympanocryptis (26 spp.). This pattern of speciation slow-down is consistent with theory around adaptive radiations and dispersal into new regions (Harmon et al. 2010; Schluter 2000; Simpson 1944; Yoder et al. 2010). 
+
+## Divergence Dating
+
+Divergence Dating
+To estimate divergence times among taxa we applied a series of fossil and secondary calibrations in MCMCTree (Rannala & Yang 2007) as outlined in the Supplement (Table S2). We started by trimming our ASTRAL tree down to a single representative for each ingroup species or subspecies for input. We reduced our molecular data to exonic markers in the AHE loci, then estimated raw genetic distances from alignments to use as a proxy for evolutionary rate. We removed the fastest 5% and slowest 5% of loci to avoid issues with extreme rate heterogeneity, removed third codon positions from all loci, then partitioned the remaining loci into three partitions using AMAS (Borowiec 2016). 
+
+For each partition we ran MCMCTree with usedata = 3 to get the approximate likelihoods and branch lengths using baseml (dos Reis & Yang 2011), then concatenated the out.BV files. We then ran four replicate MCMCTree analyses on the gradient and Hessian (in.BV file; usedata = 2), each for 20k burn-in generations before collecting 20k samples at a sampling frequency of 100 generations (2,020,000 total generations). We compared mcmc files for stationarity and convergence (ESS of all parameters > 200), combined them using logCombiner, and used this combined mcmc file to summarize divergence times on our tree (print = -1 in .ctl file). To validate our priors we ran an additional analysis (usedata = 0) to run explicitly from the prior calibrations and determine our effective priors for comparison against our posterior age estimates (Fig.S1).
+
+
+### Node Priors and Agamids in the Fossil Record
+Acrodontan lizards are known from the fossil record of Europe, Australia, and across Asia, with arguably the oldest described lineage originating in Myanmar (Wagner et al. 2021). Unfortunately, the oldest fossil taxa (*Protodraco*, *Gueragama*) are of uncertain phylogenetic placement and remaining fossils (*Uromastyx europaeus*, *Barbaturex*, *Tinosaurus*) are considerably younger than recent estimates of subfamily splits in agamids (Title et al. 2024; Burbrink et al. 2020). Agamid fossils are known from Australia (Covacevich 1990; Ramm 2025), however most are comparatively young and unlikely to be of value as calibrations. The exceptions are mid-Miocene agamid fossils from Riversleigh World Heritage Area assigned to *Sulcatidens* and ‘*Physignathus*’. The latter were ascribed to *Physignathus* when this genus applied to both *P. cocincinus* and *I. lesueurii*, and leaves the current placement of these fossils uncertain. They are clearly Australian in origin, and while similar to *Intellagama*, they also share affinities with *Physignathus*, *Hypsilurus*, and *Chelosania* (M. Hutchinson, *pers. comm.*). These fossils were found across a number of Riversleigh sites, all of which have been dated to 16-18 myo by Woodhead et al. (2016): Camel Sputum (17.8), Wayne’s Wok (17.8), Inabayance (17.8), Upper (17.8), and RSO (16.6). To use this fossil we applied it as a minimum on the crown of Australian Amphibolurinae, with a soft upper bound of 50 mya informed by estimates of the Amphibolurinae—Draconinae/Agaminae split as estimated by Burbrink et al. (2020) and Title et al. (2024). We applied a secondary calibration on the divergence between Amphibolurinae and Agaminae (Phrynocephalus) as a uniform prior with soft bounds (50-80 mya) following Burbrink et al. 2020 and Title et al. 2024, and another uniform prior with soft bounds (238-255 mya) on the crown of Lepidosauria representing the fossil *Sophineta*, arguably the oldest stem squamate. To assess the appropriateness of this calibration strategy we downsampled our species tree to a single representative of each genus and ran preliminary analyses in MCMCTree. 
+
+
+## Optima Model Fitting
+To explore the reliability of our results concerning the number and species assignment of optima we fit a number of alternative schemes. In addition to the base scheme of PCs 1-6 (>90% variance) and K=0-15, we also fit PCs 1-9 (>95% variance) and all 19 raw trait axes. To assess a more conservative view we also reduced the number of possible shifts, therefore limiting the number of optima to 5 (K=0-4). The results are highly consistent regardless of input data type (PCs vs. raw traits) or trait number (6, 9, 19), in identifying a core set of 4 shifts that are recovered in every scenario. Those correspond to (1) a baseline shift at the base of the Australian radiation of Amphibolurinae, and three shifts that correspond to primarily terrestrial taxa in (2) the edge leading to *Moloch*, (3) *Ctenophorus* + *Cryptagama*, and (4) *Tympanocryptis.* Additional shifts identified by favored (PCs 1-6) and less conservative (K>4) analyses identify optima that largely correspond to genera, including (5) *Lophosaurus*, (6) *Pogona* + *Rankinia*, (7) *Diporiphora*, and (8) the large-bodied clade of *Ctenophorus.* The remaining shifts identify outlying individual species that show unique morphologies, (9) *Diporiphora superba*, (10) *Chlamydosaurus kingii*, and (11) *Ctenophorus aurita*. The final regime belongs to the taxa at the base of the tree comprising *Intellagama* and *Hypsilurus*. 
+
+### Incomplete Convergence
+*Diporiphora superba* is an extremely gracile species with a long tail, small head, and long slender limbs that it uses to move through shrubs. Lophosaurus species similarly have long tails and limbs, but have large heads and deep, laterally compressed bodies and generally perch vertically on tree trunks. Chelosania also show a narrowing of the body but have short sturdy limbs and a relatively short tail for a species that is almost never found outside of the canopy where they often use horizontal branches.
+
+
+### Calculating Morphological Distances
+To estimate multivariate morphological distances we calculated euclidean distance between pairs of taxa. For Figure 4 this required identifying transitions among optima and measuring distances between ancestral taxa or between an ancestor and extant taxon (see function node.to.node in script Morphological_Analysis/07_funspace.R). 
+
+
+\newpage
+
+## Niche Breadth
+To characterize species niches we discretized microhabitat and structure usage into six categories. We then fit species to these classifications following the ecology and biology of the species in Melville & Wilson (2019). We scored a species as 1 for a microhabitat trait if that feature is regularly used and 0 if not used. While most species will use elevated structures for brief perching and basking (even Tympanocryptis species will climb grass tussocks or stones) we only scored species as 1 if the microhabitat is a regular part of their daily activity. We differentiate low and high structure, trees, and rock outcrops due to different physical requirements resulting from shear forces. For example, narrow branches and twigs in low and high structure allow for ample grasping and are often oriented horizontally. In contrast, trees and rock outcrops provide broad or vertical surfaces that may require different morphologies (longer limbs, claws) to access them. Evidence for this partitioning among substrate types has been documented for Australian dragons (Stuart-Fox & Owens, 2004; Collar et al. 2010). 
+
+* **Aquatic**: water courses including streams and rivers
+* **Rock**: exposed rock surfaces and outcrops with little-to-no vegetation
+* **Ground**: all terrestrial surfaces (sand, stony plain, compact soil, cracking clays, grassland) that are not elevated
+* **Low Structure**: fallen logs, stones, grasses <30 cm high
+* **High Structure**: taller vegetation such as shrubs >30 cm high
+* **Tree**: tall vegetation with broad vertical surfaces
+
+This substrate usage scheme allowed us to categorize species into two character coding schemes. In the first, we summed substrate scores to develop a measure of species niche breadth. Low scores indicate limited breadth and are indicative of substrate specialists, while high scores indicate generalist tendencies. For ease of reference we call this the Niche Breadth (NB) coding. While this coding system distinguishes species with wide and narrow breadths, it lumps all specialist taxa into a single coding, which obscures the ability to test transitions among specialist states. To address this, we created a second coding scheme (Generalist-Specialist) which classified taxa with only one or two substrates as specialists in their primary state, and all taxa with three or more substrates as generalists. This allowed us to specifically test if transitions are more likely between generalist and specialist states than they are between specialist states.  
+
+\  
+
+### Niche Breadth Models:  
+
+* 	**ER**: equal rates of transition among all 6 breadth states
+* 	**ARD**: separate transition rates among all breadth states.
+* 	**STP**: stepwise transition in the acquisition or loss of breadth states, with independent rates for each transition.
+* 	**STP-ER**: stepwise transition in the acquisition or loss of breadth states, with equal rates for each transition.
+* 	**NJ-ER**: a loose stepwise model where transitions are allowed only between n+2 states (e.g. 1→2, 1→3). All transition rates are equal.
+* 	**NJ**: a loose stepwise model where transitions are allowed only between n+2 states (e.g. 1→2, 1→3). Transitions between increasing  specialization (e.g. 3→2, 2→1) and increasing generalism (e.g. 2→3, 1→2) are allowed separate rates.
+* 	**INC**: a two rate model where increasing specialization (e.g. 3→2, 2→1) and increasing generalism (e.g. 2→3, 1→2) have different rates.
+* 	**SPC**: a one-directional model where transitions may only happen from generalism towards specialization and not in reverse.
+
+\  
+
+### Generalist-Specialist Models:  
+
+* 	**ER**: equal rates of transition among all 6 breadth states
+* 	**ARD**: separate transition rates among all breadth states
+* 	**SYM**: symmetric transition rates between each pair of states
+* 	**GENSPC**: two rate model where transitions between specialist states (rate 1) and between specialist and generalist states (rate 2 ) differ.
+
+## Model Bias and Sensitivity
+To assess the reliability of our modelling inferences we designed a simulation exercise to (1) determine the relative accuracy of our machine-learning approach in assigning ancestral regimes based on morphological data, and (2) investigate the potential for bias resulting from the interaction of our tree, data, and models. /Scripts/Morphological_Analysis/10_randomForests_Sensitivity.R. 
+
+To establish reasonable starting parameters for simulations we began by fitting a multi-OU model to each morphological trait along our SIMMAP tree of mapped amphibolurine regimes (k=5) using mvMORPH. These model fits provided empirical estimates of theta for each optimum, and single alpha and sigma values. We then fit an equal-rates model to our empirical regime data using phytools and used the transition rate to simulate the evolution of a discrete character with five states under an equal-rates model along our amphibolurine tree. To simulate the 19 continuous morphological traits we used the newly generated SIMMAP tree and the empirical multi-OU parameter values. We then used RandomForest to classify the simulated morphological data and regimes. Our next step was to estimate trait values at all internal nodes of the tree for each trait, and predict the regime of each internal node based on the RandomForest classifications. We carried out this procedure 500 times. 
+
+Our last step was to summarize the machine-learning classification outputs and compare them against the known simulated data. To identify the relative accuracy of the method, we compared the known character state of an internal node against the highest estimated classification (if >=0.5; else a node was listed as ‘equivocal’). We collated this information across every node for all 500 simulations (59,000 comparisons), accuracy was calculated as # correct / 59,000. We also assessed accuracy on a node-by-node basis with the expectation that older nodes may show reduced accuracy relative to shallow nodes (Fig.S14). To determine if there was a bias towards reconstructing some regimes, we tabulated the number of times a regime was reconstructed at nodes of particular interest (MRCA Amphibolurinae, node120; MRCA of Australian clade, node131). We compared the frequencies across groups, and to the known simulated state frequencies. Results did not depart from expectations, suggesting limited bias in inferred ancestral states.
+
+\newpage
+
+## GLM Model Fitting
+
+To link habitat usage with morphology we used a series of Generalized Linear Models (GLMs). The expectation is that habitat usage (as the sum of habitat types used) will increase with decreasing distance to the center of the morphospace, and that intermediate morphologies will exhibit greatest habitat usage breadth. The idea is that morphological centrism supports niche generalism. We investigate this by measuring the distance between each taxon and the morphological center, and by looking at the distribution of PC scores. We undertake this exercise with two sets of models outlined below. 
+
+```{r, echo=F, include=F, eval=T}
+load("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Data/GLMs/Breadth_Distance.Rdata")
+load("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Data/GLMs/Breadth_PCs.Rdata")
+```
+
+### Breadth as a Function of Distance to Morphological Center
+
+Intercept-only fit
+```{r, echo=F, include=T, eval=T}
+gmm.int$call
+bd.gmm.int.res
+```
+Non-Phylogenetic fit
+```{r, echo=F, include=T, eval=T}
+gmm3$call
+bd.gmm.nophy.res
+```
+
+Phylogenetic fit
+```{r, echo=F, include=T, eval=T}
+gmm$call
+bd.gmm.phy.res
+```
+
+AIC Comparison
+```{r, echo=F, include=T, eval=T}
+bd.AICs
+```
+
+
+### Breadth as a Function of Principal Component Scores
+
+Intercept-only fit
+```{r, echo=F, include=T, eval=T}
+gmm5$call
+gmm.pc.int.res
+```
+Non-Phylogenetic fit
+```{r, echo=F, include=T, eval=T}
+gmm4$call
+gmm.pc.nophy.res
+```
+
+Phylogenetic fit
+```{r, echo=F, include=T, eval=T}
+gmm2$call
+gmm.pc.phy.res
+```
+
+AIC Comparison
+```{r, echo=F, include=T, eval=T}
+pc.AICs
+```
+
+## Visualizing Trajectories
+
+To help visualize evolutionary trajectories relative to the morphological center, we created a branch-by-branch summary of morphological trends. To do this we measured the angle of morphological change between each node, their direct ancestral node, and the morphological center/midpoint (see Fig.\@ref(fig:GLMM)C). We classified trajectories with angles <90$^\circ$ as moving towards the morphological center, and classified trajectories with angles $\geq$ 90$^\circ$ as moving away from the morphological center. For example, an acute angle of 5° is evidence of a strong move towards the hub of the morphospace, while an obtuse angle of 175° is evidence of a strong move away from the hub. The color and saturation of each branch indicates the direction and value of the angle of change (Fig.\@ref(fig:GLMM)D). Early branches of the tree predominantly show movement towards the center of morphospace.
+
+\newpage
+
+
+# Supplementary Figures
+
+
+```{r Concatenated, echo=FALSE, eval=T, out.height = '90%', fig.align="center", fig.cap="(ref:SF1)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S1_MCMCTree_PriorPosterior_NodeLabels.pdf")
+```
+(ref:SF1) \small Plots of applied priors (blue), effective priors (pink), and posteriors (green) for each node in the tree indicate reasonable behavior. Node numbers correspond to the phylogeny plotted below, plotted with ape, where n129 is the root node. The effective prior (pink) shows how the interaction of multiple priors can shape the expected ages for a given node. This can be seen when comparing input (blue) and effective
+(pink) priors on any calibrated node (e.g. n129, n130, n134).
+
+
+\newpage
+
+\blandscape
+
+```{r FullMCMC, echo=FALSE, fig.pos='H', out.height='100%', eval=T, fig.cap="(ref:SF2)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S2_Animal_Measurements.pdf")
+```
+(ref:SF2) \small Schematic of morphological measurements taken and outlined in Table S3.
+
+\elandscape
+
+\newpage
+
+```{r LocusInfo, echo=FALSE, fig.pos='H', out.width='85%', eval=T, fig.cap="(ref:SF3)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S3_Amphibolurinae_CorrPlot.pdf")
+```
+
+(ref:SF3) \small Plot of size-corrected trait correlations with traits grouped by the morphological module they correspond to (either head, body, limb, or tail). Blues indicate positive correlations, red indicate negative correlations, with saturation indicating increasing intensity. 
+
+\newpage
+
+```{r Animal, echo=FALSE, out.height = '78%', fig.pos='H', eval=T, fig.cap="(ref:SF4)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S4_Amphibolurinae_Sampling.pdf")
+```
+
+(ref:SF4) \small  Locus type and number summarized by sample for newly sequenced samples. Dotted line indicates 50% of targeted sequences recovered. Samples in grey text at left were not included in final analyses. 
+
+\newpage
+
+
+```{r BEASTCI, echo=FALSE, eval=T, fig.align="center", out.height='100%', fig.cap="(ref:SF5)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S5_Agamidae_hASTRAL_ASTRAL4.pdf")
+```
+(ref:SF5) \small Species tree from weighted ASTRAL-hybrid including all samples sequenced and agamid outgroups. Local posterior probabilities are 1 for all nodes except those indicated by an orange circle.
+
+\newpage
+
+```{r PriorPost, echo=FALSE, eval=T, fig.align="center", out.height='80%', fig.cap="(ref:SF6)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S6_Amphibolurinae_Genera_gCF.pdf")
+```
+(ref:SF6) \small Phylogeny of the Amphibolurinae showing intergeneric relationships and support across individual loci. Gene concordance factors (gCF) show the proportion of gene trees which support a given bifurcation. Pie charts on branches indicate the percent of loci which support the presented bifurcation (gCF~1~, orange), one of each of the two other most common resolutions (gCF~2~, blue; gCF~3~, pink) or all other possibilities (gCF~p~, grey). Areas of low concordance (e.g. placement of *Lophosaurus*) indicate topological uncertainty, likely as a result of high levels of incomplete lineage sorting. 
+
+\newpage
+
+<!--\blandscape -->
+
+```{r TraitVRTrees, echo=FALSE, eval=T, out.width = '100%', fig.align="center", fig.cap="(ref:SF7)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S7_Trait_Variance.pdf")
+```
+(ref:SF7) \small Individual traits show different levels of variance among amphibolurine species, with the greatest variances occurring in size (geometric mean) and tail length. Some traits, such as hand length and upper arm length show vanishingly small variation once corrected for absolute size. (Right) Traits with higher variances are more likely to fit the fabric model, which better partitions large changes in trait values. 
+
+\  
+
+\  
+
+
+```{r ModelFits, echo=FALSE, eval=T, fig.align="center", out.width='100%', fig.cap="(ref:SF8)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S8_VTT_LTT.pdf")
+```
+(ref:SF8) \small The Amphibolurinae hypervolume expands early and late in their evolution, with a period of niche packing in the Miocene. Diversification and morphological expansion are coupled in the early radiation of dragon lizards, but are largely decoupled from the Miocene onwards. Green line represents the accumulation curve for species, black line the hypervolume through time, and red lines are 500 null expectations. 
+
+\newpage
+
+```{r ElabInn, echo=FALSE, eval=T, fig.align="center", out.width='100%', fig.cap="(ref:SF9)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S9_RF_PhyloEM_Optima5.pdf")
+```
+(ref:SF9) \small Adaptive peaks corresponding to morphological regimes identified under a multi-optima OU model in *PhyloEM* and applied to ancestral taxa using randomForests. (Bottom) Tree shows the preferred 5 regime model estimated from all 19 size corrected morphological traits, with regime shifts denoted by small white circles. (Top) Tree shows the preferred 5 regimes including likelihoods for ancestors as estimated by randomForest. The amphibolurine MRCA is estimated as a *Hypsilurus*/*Lophosaurus*-like arboreal dragon and the Australian MRCA is estimated as a semiarboreal generalist lizard (both indicated with black outline to pie).  
+
+\newpage
+
+```{r, echo=FALSE, eval=T, fig.align="center", out.width='100%', fig.cap="(ref:SF10)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S10_RF_PhyloEM_Optima12.pdf")
+```
+(ref:SF10) \small Adaptive peaks corresponding to morphological regimes identified under a multi-optima OU model in *PhyloEM* and applied to ancestral taxa using randomForests. (Bottom) Tree shows the preferred 12 regime model estimated from the first 6 PC axes of the morphological data, with regime shifts denoted by small white circles. (Top) Tree shows the preferred 12 regimes including likelihoods for ancestors as estimated by randomForest. The amphibolurine MRCA is estimated as a *Hypsilurus*-like arboreal dragon and the Australian MRCA is estimated as a semiarboreal lizard (both indicated with black outline to pie).
+
+\newpage
+
+```{r, echo=FALSE, eval=T, fig.align="center", out.width='100%', fig.cap="(ref:SF11)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S11_HeatMap_Euclidean_TreeOrder.pdf")
+```
+(ref:SF11) \small Heatmap of multivariate morphological euclidean distance among all pairs of amphibolurines. This presentation highlights the conservative evolution of *Tympanocryptis* along with the relative dissimilarity of novel species like *Chlamydosaurus* (more similar to *Lophosaurus*/*Hypsilurus*), *Ctenophorus aurita* (more similar to *Tympanocryptis*), and *Moloch.* Black boxes along the diagonal delineate genera or clades of morphologically similar taxa. 
+
+\newpage
+
+```{r, echo=FALSE, eval=T, fig.align="center", out.width='100%', fig.cap="(ref:SF12)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S12_Distance2RegimeCentroid.pdf")
+```
+(ref:SF12) \small See caption below.
+
+
+\small \textbf{Figure S12.} Multivariate Euclidean distance estimated between each extant species and estimated optima, as well as to the amphibolurine MRCA. Tree at bottom is colored according to the k = 5 model of morphological optima. Lollipop plots above show morphological distance between each extant species and the amphibolurine MRCA (black), primarily arboreal regime 1 (red), regime 2 (blue; *Tympanocryptis*), the primarily generalist regime 3 (yellow), regime 4 (green; *Moloch*), and regime 5 (orange; *Ctenophorus*). Based on this metric and our measured traits, the amphibolurine MRCA was most morphologically similar to *Intellagama*, *Physignathus*, and *Chlamydosaurus*. Terrestrial forms like *Ctenophorus aurita*, the *Ctenophorus adelaidensis* group, and *Tympanocryptis* are likely highly derived and morphologically distinct from the MRCA.
+
+\newpage
+
+```{r, echo=FALSE, eval=T, fig.align="center", out.height='100%', fig.cap="(ref:SF13)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S13_ModelFits.pdf")
+```
+(ref:SF13) \small See caption below.
+
+\small \textbf{Figure S13.} Visualizations of models fit to niche breadth and niche transitions along the generalist to specialist continuum. Complete sets of Markov models compared, resulting in favored models (grey highlight) presented in Figure 2. Line width indicates transition rate. Upper panel depicts models used to understand evolution between three specialist classes (S1, S2, S3 with niche breadth = 1) and generalists (niche breadth >= 3). The preferred model in this set shows limited transition among specialist states, and a preference for transitions between specialist and generalist states. Bottom panel depicts evolutionary models for understanding transitions in niche breadth (measured as the sum of used substrates 1-5). The preferred model in this set is a loose stepwise model in which species expand or contract their niche breadth by one or two states at a time, and do not make large jumps in niche breadth (e.g. specialist 1 to generalist 5). 
+
+\newpage
+
+```{r, echo=FALSE, eval=T, fig.align="center", out.height='100%', fig.cap="(ref:SF14)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S14_randomForests_Simulations.pdf")
+```
+(ref:SF14) \small See caption below.
+
+\small \textbf{Figure S14.} Summary of the RandomForest simulation exercise to explore bias and sensitivity. Results show the median accuracy of recovering the known trait state from 500 simulations using RandomForests. Accuracy is typically high (>70%) but there is some decrease in accuracy as we look at branches deeper in the phylogeny. We highlight three nodes of interest: the amphioblurine root, the Australian MRCA and the split between Chelosania and Moloch as reference points that identify the consistent difficulty in estimating some nodes (root, Chelosania/Moloch) and increased confidence in others (Oz MRCA).
+
+\newpage 
+
+```{r GLMM, echo=FALSE, eval=T, fig.align="center", out.height='100%', fig.cap="(ref:SF15)"}
+knitr::include_graphics("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Fig.S15_GLM_Results.pdf")
+```
+(ref:SF15) \small See caption below..
+
+\small \textbf{Figure S15.} (A) Plot of habitat usage breadth as a function of Mahalanobis distance to the morphological center. Breadth scores are integers and jitter around values is solely to improve visualization of concentration of points. Orange line indicates best fit prediction resulting from the phylogenetic generalized linear mixed model. (B) Three panels indicate trait loadings on the first three Principal Component axes that account for ~80% of trait variation. (C) Corresponding plots of habitat usage breadth against PC scores, with best fit GLM lines and confidence intervals overlaid in orange. (D) Demonstration of how the angle of morphological change was calculated between an ancestral node (nj), descendant node (nj+1), and the morphological center/midpoint (C). Angles <90$^\circ$ were classified as movement towards the center, angles $\geq$ 90$^\circ$  were classified as movement away from the center. Color and saturation of each branch indicates the direction of movement and value of the angle.
+
+\newpage
+
+<!-- SUPPLEMENTARY TABLES -->
+
+
+# Software
+
+All software and versions used for *pipesnake* V.12 assembly and analysis of molecular data.
+```{bash, eval=F, size="tiny"}
+ASSEMBLY_POSTPROCESSING:
+  python: 3.8.3
+ASTER:
+  astral-hybrid: 1.16.3.4
+BBMAP_DEDUPE: BBMAP_FILTER: BBMAP_REFORMAT:
+  BBMAP - clumpify.sh: '39.01'
+  BBMAP - reformat.sh: '39.01'
+  BBMAP - bbmap.sh: ''
+BLAT:
+  blat: '36'
+CUSTOM_DUMPSOFTWAREVERSIONS:
+  python: 3.10.6
+  yaml: '6.0'
+GBLOCKS:
+  gblocks: 0.91b
+IQTREE:
+  iqtree: 2.2.6
+MAFFT:
+  mafft: '7.221'
+MAKE_PRG:
+  python: 3.8.3
+MERGE_TREES:
+  BusyBox: v1.22.1
+PARSE_BLAT_RESULTS:
+  python: 3.8.3
+PEAR:
+  pear: 0.9.6)
+PHYLOGENY_MAKE_ALIGNMENTS:
+  python: 3.8.3
+PREPARE_ADAPTOR:
+  python: 3.8.3
+QUALITY_2_ASSEMBLY:
+  python: 3.8.3
+SED:
+  sed: This is not GNU sed version 4.0
+SPADES:
+  spades: 3.15.5
+TRIMMOMATIC:
+  trimmomatic: '0.39'
+TRIMMOMATIC_CLEAN_PE:
+  trimmomatic: '0.39'
+Workflow:
+  Nextflow: 23.04.4
+  ausarg/pipesnake: '1.2'
+```
+
+
+\newpage
+
+
+\blandscape
+
+# Supplementary Tables
+
+```{r, include=F, message=F, warning=F}
+library(dplyr)
+library(gt); 
+library(kableExtra); options(knitr.kable.NA = '---')
+library(googlesheets4)
+gs4_deauth()
+sampinfo <- read.csv("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Table.S1_Agamidae_SampleInfo.csv")
+sampinfo <- dplyr::select(sampinfo, Family, Subfamily, Genus, Species, RegNo, AHE, gene, uce, total_loci, Source,
+                          -filename, -Targets, -Order, -HigherOrder)
+```
+
+
+### Table S1. Molecular Sampling
+
+```{r, echo=F, eval=T}
+# Here's a more basic version
+kbl(sampinfo, longtable=T, booktabs=T, linesep="") %>% 
+#  add_header_above(c("Microhylidae"=6)) %>%
+  kable_styling(latex_options=c("repeat_header"),
+                font_size=6)
+```
+
+
+\elandscape
+
+### Table S2. Fossil Calibrations
+
+| Fossil Information	|   Calibration	|   Split/Position	|   Source |
+|---------------------|---------------|-------------------|----------|
+| Uniform—Sophineta	|   'B(2.38,2.55)'	|   Lepidosauria (Sphenodon + Squamata)	|   see below |
+| Uniform—Secondary	|   'B(0.50,0.80)'	|   Amphibolurinae + (Agaminae + Draconinae)	|   Burbrink et al. 2020; Title et al. 2024 |
+| Uniform—Riversleigh 'Physignathus'	|   'B(0.17,0.50)'	|   Hypsilurus + Remaining Australian Amphibolurinae	|   Covacevich 1990 |
+
+*Note*. The root divergence between lepidosaurs (Sphenodon + squamates) is based on the fossil taxa Sophineta cracoviensis (Evans & Bialynicka, 2009), Megachirella wachtleri (Renesto & Posenato, 2003), and the Vellberg Jaw (Jones et al., 2013). These taxa represent stem squamates and rhynchocephalians, and so provide a soft lower bound on the crown divergence of Lepidosauria, with a soft upper bound provided by Protosaurus speneri (von Meyer, 1832).
+
+<!-- \blandscape -->
+
+\newpage
+
+### Table S3. Morphological Measurements
+
+| No. | Measurement         | Abbreviation |                                                 Method |
+|-----|---------------------|-------------:|-------------------------------------------------------:|
+| 1   | Snout-vent length   |          SVL |                 From the tip of the snout to the vent. |
+| 2   | Snout-axilla length |          SAL |              From the tip of the snout to the midpoint |
+|     |                     |              |                of the crease between the fore-limb and |
+|     |                     |              |                       the body on the ventral surface. |
+| 3   | Inter-limb length   |          ILL |                  Midpoint of the crease on the ventral |
+|     |                     |              |                surface where the fore-limb connects to |
+|     |                     |              |                the body, to the midpoint of the crease |
+|     |                     |              |             on the ventral surface where the hind-limb |
+|     |                     |              |                                  connects to the body. |
+| 4   | Body width          |           BW |               From one lateral side of the body to the |
+|     |                     |              |      other, where possible at the midpoint of the ILL. |
+| 5   | Pelvic width        |           PW |                 From the midpoint of the crease on the |
+|     |                     |              |               ventral surface where the left hind limb |
+|     |                     |              |               connects to the body, to the midpoint of |
+|     |                     |              |                the crease on the ventral surface where |
+|     |                     |              |              the right hind limb connects to the body. |
+| 6   | Pelvic height       |           PH |            From the top of the dorsal surface were the |
+|     |                     |              |          PW was measured, to the bottom of the ventral |
+|     |                     |              |                     surface where the PW was measured. |
+| 7   | Head width          |           HW |                       Widest part of the head from one |
+|     |                     |              |                 dorsal-lateral edge to the other edge. |
+| 8   | Head length         |           HL |         From the nose tip, to the anterior of the ear. |
+| 9   | Snout length        |           SN |     From the nasal opening to the anterior of the eye. |
+| 10  | Eye diameter        |           ED |                 From one side of the eye to the other. |
+| 11  | Head depth          |           HD |                From the top of the tallest part of the |
+|     |                     |              |              head on the dorsal surface, to the bottom |
+|     |                     |              |                  of the ventral surface under the jaw. |
+| 12  | Tail width          |           TW |                         Measured at the vent, from one |
+|     |                     |              |                 dorsal-lateral edge to the other edge. |
+| 13  | Tail length         |           TL |         Measured from the vent to the tip of the tail. |
+| 14  | Fore-limb length    |          FLL |              Measured fully extended from the midpoint |
+|     |                     |              |             of the crease on the ventral surface where |
+|     |                     |              |                   the front limb connects to the body, |
+|     |                     |              |             to the end of longest toe (claw included). |
+| 15  | Front foot          |        FFOOT |                From the base of the foot to the end of |
+|     |                     |              |                       the longest toe (claw included). |
+| 16  | Lower front limb    |          LFL |          Measured from the base of the lower fore limb |
+|     |                     |              |   to the juncture where the limb meets the front foot. |
+| 17  | Upper front limb    |          UFL |        Measured from the crease on the ventral surface |
+|     |                     |              |              where the fore limb connects to the body, |
+|     |                     |              |                    to the end of the lower front limb. |
+| 18  | Hind-limb length    |          HLL |                 From the midpoint of the crease on the |
+|     |                     |              |           ventral surface where the hind limb connects |
+|     |                     |              | to the body, to the end of longest toe (claw included) |
+| 19  | Hind foot           |        HFOOT |                  From the base of the hind foot to the |
+|     |                     |              |                 end of the longest toe (claw included) |
+| 20  | Lower hind limb     |          LHL |                Measured from the top of the knee joint |
+|     |                     |              |              to the heel juncture where the limb meets |
+|     |                     |              |                                        the front foot. |
+| 21  | Upper hind limb     |          UHL |                Measured from the crease on the ventral |
+|     |                     |              |                surface where the hind limb connects to |
+|     |                     |              |                      the body, to the end of the knee. |
+
+**Table S3. Morphological measurements collected (21).**
+
+\newpage
+
+| No. | Measurement      | Shorthand     |                                   Method |
+|-----|------------------|:--------------|-----------------------------------------:|
+| 3   | Interlimb length | Interlimb     |                             see Table S3 |
+| 4   | Body width       | Body_Width    |                             see Table S3 |
+| 5   | Pelvic width     | Pelvic_Width  |                             see Table S3 |
+| 6   | Pelvic height    | Pelvic_Height |                             see Table S3 |
+| 7   | Head width       | Head_Width    |                             see Table S3 |
+| 9   | Snout length     | Snout_Eye     |                             see Table S3 |
+| 10  | Eye diameter     | Eye_Diameter  |                             see Table S3 |
+| 11  | Head depth       | Head_Depth    |                             see Table S3 |
+| 12  | Tail width       | Tail_Width    |                             see Table S3 |
+| 13  | Tail length      | Tail_Length   |                             see Table S3 |
+| 17  | Upper front limb | Upper_Arm     |                             see Table S3 |
+| 16  | Lower front limb | Lower_Arm     |                             see Table S3 |
+| 15  | Front foot       | Hand          |                             see Table S3 |
+| 21  | Upper hind limb  | Upper_Leg     |                             see Table S3 |
+| 20  | Lower hind limb  | Lower_Leg     |                             see Table S3 |
+| 19  | Hind foot        | Foot          |                             see Table S3 |
+| 22  | Neck length      | Neck          |               Snout_Axilla - Head_Length |
+| 23  | Posterior skull  | Pos_Skull     | Head_Length - (Snout_Eye + Eye_Diameter) |
+| 24  | Pelvic gap       | Pelvic_Gap    |  Snout_Vent - (Interlimb + Snout_Axilla) |
+
+**Table S3. Final morphological traits used for phenotypic analyses (19).**
+
+\newpage
+
+\blandscape
+
+### Table S4. BayesTraits Model Fitting Results
+
+```{r, echo=F, eval=T}
+# Here's a more basic version
+models <- read.csv("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Supplement/Table.S4_BayesTraits_MarginalLikelihoods.csv")
+kbl(models, longtable=T, booktabs=T, linesep="") %>% 
+#  add_header_above(c("Microhylidae"=6)) %>%
+  kable_styling(latex_options=c("repeat_header"),
+                font_size=6)
+```
+
+\elandscape
+
+
+# Supplemental References
+
+
+<!-- ::: {#refs} -->
+
+Bolger, A. M., Lohse, M., & Usadel, B. (2014). Trimmomatic: a flexible trimmer for Illumina sequence data. Bioinformatics, 30(15), 2114-2120.  
+
+\  
+
+Borowiec, M. L. (2016). AMAS: a fast tool for alignment manipulation and computing of summary statistics. PeerJ, 4, e1660.
+
+\  
+
+dos Reis, M. and Yang, Z. (2011). Approximate likelihood calculation for Bayesian estimation of divergence times. Molecular Biology and Evolution, 28:2161-2172.
+
+\  
+
+Katoh, K., & Standley, D. M. (2013). MAFFT multiple sequence alignment software version 7: improvements in performance and usability. Molecular Biology and Evolution, 30(4), 772-780.  
+
+\  
+
+Kent, W. J. (2002). BLAT—the BLAST-like alignment tool. Genome Research, 12(4), 656-664.  
+
+\  
+
+Prjibelski, A., Antipov, D., Meleshko, D., Lapidus, A., & Korobeynikov, A. (2020). Using SPAdes de novo assembler. Current protocols in bioinformatics, 70(1), e102.  
+
+\  
+
+Stuart‐Fox, D., & Owens, I. P. (2003). Species richness in agamid lizards: chance, body size, sexual selection or ecology?. Journal of evolutionary biology, 16(4), 659-669.
+
+\  
+
+Talavera, G., & Castresana, J. (2007). Improvement of phylogenies after removing divergent and ambiguously aligned blocks from protein sequence alignments. Systematic biology, 56(4), 564-577.  
+
+\  
+
+Wagner, P., Stanley, E. L., Daza, J. D., & Bauer, A. M. (2021). A new agamid lizard in mid-Cretaceous amber from northern Myanmar. Cretaceous Research, 124, 104813.
+
+\  
+
+Zhang, J., Kobert, K., Flouri, T., & Stamatakis, A. (2014). PEAR: a fast and accurate Illumina Paired-End reAd mergeR. Bioinformatics, 30(5), 614-620.
+
+<!-- ::: -->
+
+\newpage
+
+

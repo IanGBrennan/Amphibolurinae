@@ -17,8 +17,9 @@ load("Data/Ancestral_Trait_Estimates.RData")
 ############################################################################
 
 regimes <- read.csv("Data/Amphibolurinae_Ecology.csv")
-regimes <- dplyr::select(regimes, Genus_species, opt5); colnames(regimes) <- c("Genus_species","regimes")
+regimes <- dplyr::select(regimes, Genus_species, opt5, breadth); colnames(regimes) <- c("Genus_species","regimes","breadth")
 allLSR <- left_join(allLSR, regimes)
+allLSR$Genus <- strex::str_before_first(allLSR$Genus, "_")
 
 ############################################################################
 
@@ -41,11 +42,11 @@ plot(x = fs.curr,
 
 # estimate and visualize the contemporary functional space per genus
 genera <- allLSR$Genus
-fs.genera <- funspace::funspace(x = curr.pca, PCs = c(1,2), n_divisions = 300, group.vec = genera)
+fs.genera <- funspace::funspace(x = curr.pca, PCs = c(1,3), n_divisions = 300, group.vec = genera)
 #summary(tsg)
 plot(x = fs.genera,
      type = "groups",
-     quant.plot = T, quant = c(0.25,0.5,0.95,0.999),
+     quant.plot = T, quant = 0.9,
      globalContour = T,
 #     arrows = T, arrows.length = 3, arrows.label.cex = 0.5, 
      pnt = T,
@@ -57,7 +58,7 @@ plot(x = fs.genera,
 
 # estimate and visualize the contemporary functional space per regime (k=5)
 regime <- allLSR$regimes
-fs.regime <- funspace::funspace(x = curr.pca, PCs = c(1,2), n_divisions = 300, group.vec = regime)
+fs.regime <- funspace::funspace(x = curr.pca, PCs = c(1,3), n_divisions = 300, group.vec = regime)
 #summary(tsg)
 plot(x = fs.regime,
      type = "groups",

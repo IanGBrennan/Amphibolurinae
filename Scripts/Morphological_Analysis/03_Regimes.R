@@ -3,7 +3,7 @@ setwd("/Users/ianbrennan/Documents/GitHub/Amphibolurinae")
 #######################################################################
 
 library(l1ou)
-source("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Scripts/shifts.to.simmap.l1ou.R")
+source("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Scripts/Assorted_Alternates/shifts.to.simmap.l1ou.R")
 load("Data/Amphibolurinae_Data.RData")
 load("Data/Ancestral_Trait_Estimates.RData")
 

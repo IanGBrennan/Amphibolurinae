@@ -25,7 +25,8 @@ allLSR$Genus <- sapply(allLSR$Genus_species, function(x) strsplit(x,"_")[[1]][1]
 # make a function to map the distance between each taxon and the centroid
 # of each regime
 compare2centroid <- function(focaldf, alldf){
-  cent <- apply(focaldf,2,mean)
+  #cent <- apply(focaldf,2,mean)
+  cent <- apply(focaldf,2,median)
   dists <- apply(alldf, 1, function(x) euclidean(cent,x))
   return(dists)
 }
@@ -38,6 +39,16 @@ e.R3 <- dplyr::filter(allLSR, Genus %in% c("Amphibolurus","Gowidon","Tropicagama
 e.R4 <- dplyr::filter(allLSR, Genus %in% c("Moloch"))
 e.R5 <- dplyr::filter(allLSR, Genus %in% c("Ctenophorus","Cryptagama"))
 
+all.mean <- apply(allLSR[,1:19],2,mean)
+all.median <- apply(allLSR[,1:19],2,median)
+all.mid <- apply(allLSR[,1:19],2,function(x) (max(x)+min(x))/2)
+
+plot(LSR.anc[,2:3], col="grey", pch=19)
+points(allLSR[,2:3])
+points(all.mean[[2]], all.mean[[3]], col = "red", pch = 16, cex = 1.5) # New points in red, slightly larger
+points(all.median[[2]], all.median[[3]], col = "blue", pch = 16, cex = 1.5) # New points in red, slightly larger
+points(all.mid[[2]], all.mid[[3]], col = "green", pch = 16, cex = 1.5) # New points in red, slightly larger
+
 # compare each taxon to ce
 
 all.compare <- allLSR
@@ -47,9 +58,12 @@ all.compare$dist2R3 <- compare2centroid(e.R3[,1:19], allLSR[,1:19])
 all.compare$dist2R4 <- compare2centroid(e.R4[,1:19], allLSR[,1:19])
 all.compare$dist2R5 <- compare2centroid(e.R5[,1:19], allLSR[,1:19])
 all.compare$dist2MRCA <- apply(allLSR[,1:19], 1, function(x) euclidean(LSR.anc[120,],x))
+all.compare$dist2CNTR <- apply(allLSR[,1:19], 1, function(x) euclidean(all.mid,x))
+
+compare2centroid()
 
 # plot the multivariate euclidean distance to the centroid of Regime 1 "Arboreal"
-plotTree.lollipop(agam.tree, dplyr::select(all.compare, dist2R5, dist2R4, dist2R3, dist2R2, dist2R1, dist2MRCA),
+plotTree.lollipop(agam.tree, dplyr::select(all.compare, dist2R5, dist2R4, dist2R3, dist2R2, dist2R1, dist2MRCA, dist2CNTR),
                   args.plotTree=list(fsize=0.5,ftype="i"))
 
 #######################################################################

@@ -46,17 +46,12 @@ breadth <- niche %>%
   dplyr::select(Genus_species, breadth)
 breadth <- setNames(breadth$breadth, breadth$Genus_species)
 
-# specify a stepwise jump model where transitiosn are allowed
-# only between n+2 states (e.g. 1-->2, 1-->3), but those transitions rates are all the same
-nj   <- matrix(c(0,1,1,0,0,
-                 1,0,1,1,0,
-                 1,1,0,1,1,
-                 0,1,1,0,1,
-                 0,0,1,1,0),5)
-fit.NJ <- phytools::fitMk(tree=agam.tree, x=breadth, model=nj); plot(fit.NJ,width=T); AIC(fit.NJ)
+
+# read in the results of the Niche Breadth model fitting to estimate ancestral states
+load("/Users/ianbrennan/Documents/GitHub/Amphibolurinae/Data/ModellingResults_NicheBreadth.RData")
 
 # extract the fit of the best model (here: NJ)
-anc.fit <- phytools::ancr(fit.NJ, type="marginal")
+anc.fit <- phytools::ancr(anova.nb, type="marginal")
 
 # extract the ancestral states for substrate breadth
 aces <- anc.fit$ace # this comes from 09_Modelling_NicheBreadth.R
@@ -66,6 +61,13 @@ breadth.anc <- c(breadth, best)
 
 # combine the distance estimates and the breadth data
 breadth.dist <- data.frame(breadth = breadth.anc, euc = mid.dist, mah = mid.mahl)
+
+# get the variance covariance matrix for the tree including ancestors
+agam.mat <- phytools::vcvPhylo(agam.tree, anc.nodes=T, model="BM")
+rownames(agam.mat)[120:236] <- paste0("n",120:236) # rename rows
+colnames(agam.mat)[120:236] <- paste0("n",120:236) # rename columns
+agam.mat <- agam.mat[order(rownames(agam.mat)),] # alphabetically order rows
+agam.mat <- agam.mat[,order(colnames(agam.mat))] # alphabetically order columns
 
 ##################################################################################
 ##################################################################################
@@ -85,13 +87,6 @@ lines(d.weight, b.weight)
 # now we'll do the same but include the phylogeny via a vcv matrix
 # we'll do this with glmmTMB and rerun the basic glm at the same time
 
-# get the variance covariance matrix for the tree including ancestors
-agam.mat <- phytools::vcvPhylo(agam.tree, anc.nodes=T)
-rownames(agam.mat)[120:236] <- paste0("n",120:236) # rename rows
-colnames(agam.mat)[120:236] <- paste0("n",120:236) # rename columns
-agam.mat <- agam.mat[order(rownames(agam.mat)),] # alphabetically order rows
-agam.mat <- agam.mat[,order(colnames(agam.mat))] # alphabetically order columns
-
 # downsample the data to match the vcv matrix
 bdist <- breadth.dist[which(rownames(breadth.dist)%in%rownames(agam.mat)),]
 bdist$species <- rownames(bdist)
@@ -100,8 +95,8 @@ bdist <- bdist[order(rownames(bdist)),] # alphabetically order columns
 bdist$tipnode <- ifelse(bdist$species%in%agam.tree$tip.label,"tip","node")
 
 # let's fit a phylogenetically corrected GLM (requires data and propto to both be alphabetical order)
-gmm <- glmmTMB(breadth ~ mah + (1|species) + propto(0 + species|g, agam.mat),
-               data = bdist, family = "poisson",
+gmm <- glmmTMB(breadth ~ mah + propto(0 + species|g, agam.mat),
+               data = bdist, family = truncated_poisson(link = "log"),
                REML = F); summary(gmm); AIC(gmm);
 bd.gmm.phy.res <- data.frame(summary(gmm)$coef$cond)
 
@@ -114,23 +109,27 @@ breadth.mah <- ggplot() +
   geom_ribbon(data=pred.df, aes(x=x,ymin=conf.low,ymax=conf.high),fill="lightGrey", alpha=0.5) +
   #geom_jitter(data=bdist, aes(x=mah,y=breadth, color=tipnode), size=3, alpha=0.5, height=0.1) +
   geom_line(data=pred.df, aes(x=x,y=predicted), color="darkgrey", lwd=2, lineend="round", alpha=0.5) +
+  labs(x = "Breadth (predicted)", y = "Distance to Morphological Center (mahalanobis)") +
   theme_bw()
 
 # compare against the same model without phylogenetic correction
-gmm3 <- glmmTMB(breadth ~ mah + (1|species),
-                data = bdist, family = "poisson",
+gmm3 <- glmmTMB(breadth ~ mah,
+                data = bdist, 
+                family = truncated_poisson(link = "log"),
                 REML = F); summary(gmm3); AIC(gmm3)
 bd.gmm.nophy.res <- data.frame(summary(gmm3)$coef$cond)
 
 # compare against an intercept-only model
-gmm.int <- glmmTMB(breadth ~ 1 + (1|species),
-                   data = bdist, family = "poisson",
+gmm.int <- glmmTMB(breadth ~ 1,
+                   data = bdist, 
+                   family = truncated_poisson(link = "log"),
                    REML = F); summary(gmm.int); AIC(gmm.int)
 bd.gmm.int.res <- data.frame(summary(gmm.int)$coef$cond)
 
 bd.AICs <- data.frame(phy = summary(gmm)$AICtab,
                    nonphy = summary(gmm3)$AICtab,
                    intercept = summary(gmm.int)$AICtab)
+bd.AICs["delta.AIC",] <- bd.AICs["AIC",] - min(bd.AICs["AIC",]); bd.AICs
 
 save(gmm, gmm3, gmm.int,
      bd.gmm.phy.res,
@@ -138,7 +137,11 @@ save(gmm, gmm3, gmm.int,
      bd.gmm.int.res, 
      bd.AICs, file = "Data/GLMs/Breadth_Distance.RData")
 
+# Simulate standard residuals
+sim.res.gmm <- DHARMa::simulateResiduals(fittedModel = gmm)
 
+# Generate the Q-Q plot and view significance tests
+DHARMa::plotQQunif(sim.res.gmm)
 
 ##################################################################################
 ##################################################################################
@@ -150,64 +153,89 @@ save(gmm, gmm3, gmm.int,
 lp <- data.frame(prcomp(LSR.anc[,1:19])$x)
 lp$breadth <- breadth.anc[which(names(breadth.anc)==rownames(lp))]
 
-# fit a GLM of substrate breadth as a function of PC scores
-ex.glm <- glm(breadth ~ PC1 + I(PC1^2) + PC2 + I(PC2^2) + PC3 + I(PC3^2), family="poisson", data=lp); summary(ex.glm); AIC(ex.glm)
-ex.int <- glm(breadth ~ 1, family="poisson", data=lp); summary(ex.int); AIC(ex.int)
-
-# extrapolate the data to plot the fit (curves)
-x1weight <- seq(from=min(lp$PC1), to=max(lp$PC1), length.out=500)
-x2weight <- seq(from=min(lp$PC2), to=max(lp$PC2), length.out=500)
-x3weight <- seq(from=min(lp$PC3), to=max(lp$PC3), length.out=500)
-yweight <- predict(ex.glm, list(PC1 = x1weight, 
-                                PC2 = x2weight,
-                                PC3 = x3weight), type="response")
-plot(lp$PC1, lp$breadth, pch = 16, xlab = "PC1", ylab = "breadth"); lines(x1weight, yweight)
-plot(lp$PC2, lp$breadth, pch = 16, xlab = "PC2", ylab = "breadth"); lines(x2weight, yweight)
-plot(lp$PC3, lp$breadth, pch = 16, xlab = "PC3", ylab = "breadth"); lines(x3weight, yweight)
-
-pred.pc1 <- predict(ex.glm, list(PC1=x1weight))
-pred.pc2 <- predict(ex.glm, PC2=x2weight)
-testo <- data.frame(PC1=x1weight, pred.pc1)
-
-##################################################################################
-
+# reorder the data frame to match the covariance matrix
 lps <- lp[which(rownames(lp)%in%rownames(agam.mat)),]
 lps$species <- rownames(lps)
 lps$g <- 1
 lps <- lps[order(rownames(lps)),]
 
+# If you'd like to use only observed data, drop the internal nodes and use agam.mat2
+# this removes estimated niche breadth states and ancestral morphologies
+# create a data frame of the breadth data and PC scores
+lps <- data.frame(prcomp(allLSR[,1:19])$x)
+lps$breadth <- breadth[which(names(breadth)==rownames(lps))]
+lps$species <- rownames(lps)
+lps$g <- 1
+lps <- lps[order(rownames(lps)),]
+lps$genus <- strex::str_before_first(lps$species,"_")
+agam.mat2 <- agam.mat[rownames(agam.mat) %in% agam.tree$tip.label,
+                      colnames(agam.mat) %in% agam.tree$tip.label]
+
 # let's fit a phylogenetically corrected GLM (requires data and propto to both be alphabetical order)
-gmm2 <- glmmTMB(breadth ~ I(PC1^2) + PC2 + I(PC2^2) + PC3 + I(PC3^2) + (1|species) + propto(0 + species|g, agam.mat),
-               data = lps, family = "poisson",
+gmm2 <- glmmTMB(breadth ~ PC1 + I(PC1^2) + PC2 + I(PC2^2) + 
+                          PC3 + I(PC3^2) + PC4 + I(PC4^2) +
+                          PC5 + I(PC5^2) + PC6 + I(PC6^2) +
+                        #  PC7 + I(PC7^2) + PC8 + I(PC8^2) +
+                        #  (1|species) + 
+                          propto(0 + species|g, agam.mat),
+               data = lps, family = truncated_poisson(link = "log"),
                REML = F); summary(gmm2); AIC(gmm2)
 gmm.pc.phy.res <- data.frame(summary(gmm2)$coef$cond)
 
 # predict the data from the model
 pred.df2 <- ggpredict(gmm2, terms = c("PC1 [all]"))
 pred.df3 <- ggpredict(gmm2, terms = c("PC2 [all]"))
+pred.df4 <- ggpredict(gmm2, terms = c("PC3 [all]"))
+pred.df5 <- ggpredict(gmm2, terms = c("PC4 [all]"))
 
-# plot
-breadth.pc <- ggplot() +
+# plot the predicted relationships for each of the first 4 PCs
+breadth.pc1 <- ggplot() +
   geom_ribbon(data=pred.df2, aes(x=x,ymin=conf.low,ymax=conf.high),fill="lightGrey", alpha=0.5) +
-  #geom_jitter(data=lps, aes(x=PC1,y=breadth), size=3, alpha=0.5, height=0.1) +
+  geom_jitter(data=lps, aes(x=PC1,y=breadth), size=3, alpha=0.5, height=0.1) +
   geom_smooth(data=pred.df2, aes(x=x,y=predicted), method="loess", se=F) +
   theme_bw()
+breadth.pc2 <- ggplot() +
+  geom_ribbon(data=pred.df3, aes(x=x,ymin=conf.low,ymax=conf.high),fill="lightGrey", alpha=0.5) +
+  geom_jitter(data=lps, aes(x=PC2,y=breadth), size=3, alpha=0.5, height=0.1) +
+  geom_smooth(data=pred.df3, aes(x=x,y=predicted), method="loess", se=F) +
+  theme_bw()
+breadth.pc3 <- ggplot() +
+  geom_ribbon(data=pred.df4, aes(x=x,ymin=conf.low,ymax=conf.high),fill="lightGrey", alpha=0.5) +
+  geom_jitter(data=lps, aes(x=PC3,y=breadth), size=3, alpha=0.5, height=0.1) +
+  geom_smooth(data=pred.df4, aes(x=x,y=predicted), method="loess", se=F) +
+  theme_bw()
+breadth.pc4 <- ggplot() +
+  geom_ribbon(data=pred.df5, aes(x=x,ymin=conf.low,ymax=conf.high),fill="lightGrey", alpha=0.5) +
+  geom_jitter(data=lps, aes(x=PC4,y=breadth), size=3, alpha=0.5, height=0.1) +
+  geom_smooth(data=pred.df5, aes(x=x,y=predicted), method="loess", se=F) +
+  theme_bw()
+
+library(patchwork)
+breadth.pc1 | breadth.pc2 | breadth.pc3 | breadth.pc4
 
 # let's fit a the non-phylo glmm
-gmm4 <- glmmTMB(breadth ~ PC1 + I(PC1^2) + PC2 + I(PC2^2) + PC3 + I(PC3^2) + (1|species),
-                data = lps, family = "poisson",
+gmm4 <- glmmTMB(breadth ~ PC1 + I(PC1^2) + PC2 + I(PC2^2) + PC3 + I(PC3^2) +
+                          PC4 + I(PC4^2) + PC5 + I(PC5^2) + PC6 + I(PC6^2),
+                data = lps, family = truncated_poisson(link = "log"),
                 REML = F); summary(gmm4); AIC(gmm4)
 gmm.pc.nophy.res <- data.frame(summary(gmm4)$coef$cond)
 
 # and the intercept model
 gmm5 <- glmmTMB(breadth ~ 1,
-                data = lps, family = "poisson",
+                data = lps, family = truncated_poisson(link = "log"),
                 REML = F); summary(gmm5); AIC(gmm5)
 gmm.pc.int.res <- data.frame(summary(gmm5)$coef$cond)
 
 pc.AICs <- data.frame(phy = summary(gmm2)$AICtab,
                       nonphy = summary(gmm4)$AICtab,
                       intercept = summary(gmm5)$AICtab)
+pc.AICs["delta.AIC",] <- pc.AICs["AIC",] - min(pc.AICs["AIC",]); pc.AICs
+
+# Simulate standard residuals
+sim.res.gmm2 <- DHARMa::simulateResiduals(fittedModel = gmm2)
+
+# Generate the Q-Q plot and view significance tests
+DHARMa::plotQQunif(sim.res.gmm2)
 
 save(gmm2, gmm4, gmm5,
      gmm.pc.phy.res,
@@ -288,6 +316,7 @@ color.angles <- function(phy, trait.df, metric, distance, plot=T){
                      length = phy$edge.length,
                      name.parent = paste0("n",phy$edge[,1]))
   ndel$name.child <- sapply(ndel$node.child, function(x) ifelse(x <= Ntip(phy), phy$tip[[x]], paste0("n",x)))
+  ndel$parent.height <- max(nodeHeights(phy)) - sapply(ndel$node.parent, function(x) nodeheight(phy,x))
   
   # estimate the multivariate distance between each parent/child node (along each edge)
   if(metric == "ParentToChild"){
@@ -357,6 +386,9 @@ color.angles <- function(phy, trait.df, metric, distance, plot=T){
   output <- rbind(out.tow, out.awa)
   # extract the colors
   color.df <- output[order(output$edge),]
+  
+  if(plot==F){return(color.df)}
+  
   #color.df <- color.df[-1,] # the root
   # plot if you'd like
   if(plot==T){
@@ -369,46 +401,68 @@ color.angles <- function(phy, trait.df, metric, distance, plot=T){
     color.bar(colors.tow, min=89, max=0, title="toward center")
     color.bar(colors.awa, min=90, max=round(max(out.awa$angle),2), title="away from center")
   }
-  
 }
 
+# plot the tree
 color.angles(phy = agam.tree, 
              trait.df = LSR.anc[,1:19],
              metric = "ParentToChild",
-             distance = "euclidean")
+             distance = "euclidean",
+             plot = T)
 
+# grab the data
+angles.df <- color.angles(phy = agam.tree, 
+             trait.df = LSR.anc[,1:19],
+             metric = "ParentToChild",
+             distance = "euclidean",
+             plot = F)
 
+# visualize the relationship of node height with angle of change
+ggplot(data=angles.df, aes(x=parent.height, y=angle)) +
+  geom_point() + geom_smooth(method="lm") +
+  geom_hline(yintercept=90, linetype="dotted") +
+  theme_classic()
+
+# fit a simple 
+height.angle <- lm(angle ~ parent.height, data=angles.df)
+
+save(res.df, height.angle, file="Data/ModellingResults_AngleAgeLM.RData")
 
 
 #####################
 
 
 ### Visualize the surface
+lps.ext <- lps[which(rownames(lps) %in% agam.tree$tip.label),]; lps.ext$genus <- strex::str_before_first(lps.ext$species,"_")
 
 # Assume fit is your model and you want to predict over ranges of x1 and x2
+# 1. Create a grid of new predictor values (e.g., holding PC2 and PC3 at 0)
 pred_grid <- expand.grid(
-#  PC1 = seq(min(lp$PC1), max(lp$PC1), length.out = 1000),
-  PC1 = seq(-2,2,length.out=100),
-#  PC2 = seq(min(lp$PC2), max(lp$PC2), length.out = 1000),
-  PC3 = seq(-2,2,length.out=100)
-#  PC3 = seq(min(lp$PC3), max(lp$PC3), length.out = 100)
+#  PC1 = 1.1*seq(min(lps$PC1), max(lps$PC1), length.out = 100),
+  PC1 = seq(-2, 2, length.out=100),
+#  PC2 = 1.1*seq(min(lps$PC2), max(lps$PC2), length.out = 100),
+  PC2 = 0,
+  PC3 = 0,
+  PC4 = seq(-1,1, length.out=100),
+#  PC4 = seq(min(lps$PC4), max(lps$PC4), length.out = 100),
+  PC5 = 0,
+  PC6 = 0,
+  species = NA,  # Dummy variable required by glmmTMB
+  g = NA         # Dummy variable required by glmmTMB
 )
 
-ex.glm2 <- glm(breadth ~ PC1 + I(PC1^2) + PC3 + I(PC3^2), family="poisson", data=lp)
-pred_grid$predicted_value <- predict(ex.glm2, newdata = pred_grid)
+# 2. Predict population-level response for this grid
+pred_grid$predicted_value <- predict(gmm2, newdata = pred_grid, re.form = ~0, type = "response")
 
-library(ggplot2)
-ggplot(pred_grid, aes(x = PC1, y = PC3, fill = predicted_value)) +
-  geom_tile() +
+#library(ggplot2)
+ggplot() +
+  geom_tile(data=pred_grid, aes(x = PC1, y = PC4, fill = predicted_value)) +
 #  scale_color_brewer(palette="Spectral") +
   scale_fill_gradient(low = "#10B1E7", high = "#D32427") + # Optional: customize colors
 #  scale_fill_gradient(low = "#10B1E7", high = "white") + # Optional: customize colors
-  theme_minimal()
-
-
-
-
-
-
-
-#
+  theme_minimal() + theme(legend.position="none") +
+  geom_point(data=lps.ext, aes(x=PC1, y=PC4, color=genus), size=4) +
+  scale_y_reverse(limits=c(-0.7,0.7)) + xlim(-2,2)
+#  geom_point(data=lps, aes(x=PC1, y=PC4, shape=genus), color="black", size=4) +
+#  geom_point(data=lps, aes(x=PC1, y=PC4, color=genus, shape=genus), size=3) +
+#  scale_shape_manual(values = c(rep(c(15,17,19),6),16))

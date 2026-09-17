@@ -64,7 +64,7 @@ nj   <- matrix(c(0,1,1,0,0,
                  1,1,0,1,1,
                  0,1,1,0,1,
                  0,0,1,1,0),5)
-fit.NJ <- fitMk(tree=agam.tree, x=breadth, model=nj); plot(fit.NJ,width=T); AIC(fit.NJ)
+fit.NJER <- fitMk(tree=agam.tree, x=breadth, model=nj); plot(fit.NJER,width=T); AIC(fit.NJER)
 
 # specify the stepwise jump model as above, but allowing 
 # different rates for increasing and decreasing specialization/generalism
@@ -73,7 +73,7 @@ nj2  <- matrix(c(0,1,1,0,0,
                  2,2,0,1,1,
                  0,2,2,0,1,
                  0,0,2,2,0),5)
-fit.NJ2 <- fitMk(tree=agam.tree, x=breadth, model=nj2); plot(fit.NJ2,width=T); AIC(fit.NJ2)
+fit.NJ <- fitMk(tree=agam.tree, x=breadth, model=nj2); plot(fit.NJ,width=T); AIC(fit.NJ)
 
 # specify a model where transitions from generalists to specialists
 # are favored over the reverse (all rates equal)
@@ -101,61 +101,75 @@ spc  <- matrix(c(0,1,1,1,1,
                  0,0,0,0,0),5)
 fit.SPC <- fitMk(tree=agam.tree, x=breadth, model=spc); plot(fit.SPC,width=T,color=T); AIC(fit.SPC)
 
+# Compare all models and save the object
+anova.nb <- anova(fit.ER, fit.ARD, fit.STP, fit.STPER, fit.NJER, fit.NJ, fit.INC, fit.SPC)
+anova.nb$delta <- anova.nb$AIC - min(anova.nb$AIC)
+anova.nb <- anova.nb[order(anova.nb$delta, decreasing=T),]
+
+# Save the results to file
+save(fit.ER, fit.ARD, fit.STP, fit.STPER, fit.NJER, fit.NJ, fit.INC, fit.SPC,
+  anova.nb, file="Data/ModellingResults_NicheBreadth.RData")
+
+# Estimate Ancestral States under a model-averaging approach
+anc.fit <- ancr(anova.nb, type="marginal")
+plot(anc.fit)
 
 
-# compare AIC values across model fits
-AIC.df <- data.frame(AIC(fit.ER, fit.ARD, fit.STP, fit.STPER, fit.NJ, fit.NJ2, fit.INC, fit.SPC))
-# calculate the AIC weights
-AIC.df$W <- aic.w(AIC(fit.ER, fit.ARD, fit.STP, fit.STPER, fit.NJ, fit.NJ2, fit.INC, fit.SPC)$AIC)
-# order models by AICw
-AIC.df[order(AIC.df$W,decreasing=T),]
+# Create a likelihood ratio test nested models
+phytools.LRT <- function(m1, m2){
+  # m1 is complex model, m2 is simpler model
+  lr.stat <- 2*(m1$logLik - m2$logLik)
+  df <- length(m1$rates) - length(m2$rates)
+  p.val <- pchisq(lr.stat, df=df, lower.tail=F)
+  return(p.val)
+}
 
-# extract the fit of the best model (here: NJ)
-anc.fit <- ancr(fit.NJ, type="marginal")
+##########################################################################
 
+# Plot the structure of all the competing models
 
 ## create plot
 par(mfrow=c(3,4))
-plot(fit.ER,cex.rates=0.9,width=T)
+plot(fit.ER,cex.rates=0.25,width=T)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.ER),1)),bty="n",cex=1)
-mtext("(e) ER",line=0,adj=0,cex=1)
+mtext("(g) ER",line=0,adj=0,cex=1)
 
-plot(fit.ARD,cex.rates=0.9,show.zeros=FALSE,width=T)
+plot(fit.ARD,cex.rates=0.25,show.zeros=FALSE,width=T)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.ARD),1)),bty="n",cex=1)
-mtext("(f) ARD",line=0,adj=0,cex=1)
+mtext("(h) ARD",line=0,adj=0,cex=1)
 
-plot(fit.STP,cex.rates=0.9,show.zeros=F,width=T,color=FALSE)
+plot(fit.STP,cex.rates=0.25,show.zeros=F,width=T,color=FALSE)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.STP),1)),bty="n",cex=1)
-mtext("(g) STP",line=0,adj=0,cex=1)
+mtext("(i) STP",line=0,adj=0,cex=1)
 
-plot(fit.STPER,cex.rates=0.9,show.zeros=F,width=T,color=FALSE)
+plot(fit.STPER,cex.rates=0.25,show.zeros=F,width=T,color=FALSE)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.STP),1)),bty="n",cex=1)
-mtext("(h) STP-ER",line=0,adj=0,cex=1)
+mtext("(j) STP-ER",line=0,adj=0,cex=1)
 
-plot(fit.NJ,cex.rates=0.9,show.zeros=FALSE,width=T,color=FALSE)
-legend("topleft",legend=paste("AIC =",round(AIC(fit.NJ2),1)),bty="n",cex=1)
-mtext("(i) NJ-ER",line=0,adj=0,cex=1)
+plot(fit.NJER,cex.rates=0.25,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(fit.NJER),1)),bty="n",cex=1)
+mtext("(k) NJ-ER",line=0,adj=0,cex=1)
 
-plot(fit.NJ2,cex.rates=0.9,show.zeros=FALSE,width=T,color=FALSE)
+plot(fit.NJ,cex.rates=0.25,show.zeros=FALSE,width=T,color=FALSE)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.NJ),1)),bty="n",cex=1)
-mtext("(j) NJ",line=0,adj=0,cex=1)
+mtext("(l) NJ",line=0,adj=0,cex=1)
 
-plot(fit.INC,cex.rates=0.9,show.zeros=FALSE,width=T,color=FALSE)
+plot(fit.INC,cex.rates=0.25,show.zeros=FALSE,width=T,color=FALSE)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.INC),1)),bty="n",cex=1)
-mtext("(k) INC",line=0,adj=0,cex=1)
+mtext("(m) INC",line=0,adj=0,cex=1)
 
-plot(fit.SPC,cex.rates=0.9,show.zeros=FALSE,width=T,color=FALSE)
+plot(fit.SPC,cex.rates=0.25,show.zeros=FALSE,width=T,color=FALSE)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.SPC),1)),bty="n",cex=1)
-mtext("(l) SPC",line=0,adj=0,cex=1)
+mtext("(n) SPC",line=0,adj=0,cex=1)
 
 #######################################################################
 
-# plot the best fitting model
+# plot the model-averaged result
 
 # set colors
 cols <- RColorBrewer::brewer.pal(9, "Reds")[c(9,7,5,3,1)]
 node.cex<-apply(anc.fit$ace,1,
-                function(x) if(any(x>0.8)) 0.3 else 0.8)
+                function(x) if(any(x>0.7)) 0.3 else 0.8)
 # plot tree
 plot(anc.fit,
      args.plotTree=list(type="arc", arc_height=0.5, fsize=0.3, offset=1, color="grey"), # type="arc"
@@ -223,68 +237,91 @@ gen.spc <- matrix(c(0,1,1,1,
                     2,2,2,0),4)
 fit.GENSPC <- fitMk(tree=agam.tree, x=genspec, model=gen.spc); plot(fit.GENSPC,width=T,color=T); AIC(fit.GENSPC)
 
+# The GENSPC
 gen.spc2 <-matrix(c(0,1,1,1,
                     1,0,2,2,
                     1,2,0,2,
                     1,2,2,0),4)
 fit.GENSPC2 <- fitMk(tree=agam.tree, x=genspec, model=gen.spc2); plot(fit.GENSPC2,width=T,color=T); AIC(fit.GENSPC2)
 
-gen.spc3 <-matrix(c(0,1,2,3,
-                    1,0,4,4,
-                    2,4,0,4,
-                    3,4,4,0),4)
-fit.GENSPC3 <- fitMk(tree=agam.tree, x=genspec, model=gen.spc3); plot(fit.GENSPC3,width=T,color=T); AIC(fit.GENSPC3)
+# gen.spc3 <-matrix(c(0,1,2,3,
+#                     1,0,4,4,
+#                     2,4,0,4,
+#                     3,4,4,0),4)
+# fit.GENSPC3 <- fitMk(tree=agam.tree, x=genspec, model=gen.spc3); plot(fit.GENSPC3,width=T,color=T); AIC(fit.GENSPC3)
+# 
+# gen.spc4<- matrix(c(0,2,2,2,
+#                     1,0,2,2,
+#                     1,2,0,2,
+#                     1,2,2,0),4)
+# fit.GENSPC4 <- fitMk(tree=agam.tree, x=genspec, model=gen.spc4); plot(fit.GENSPC4,width=T,color=T); AIC(fit.GENSPC4)
+# 
+# # this model gives rate estimates equivalent to gen.spc2, so is redundant
+# gen.spc5<- matrix(c(0,3,3,3,
+#                     1,0,2,2,
+#                     1,2,0,2,
+#                     1,2,2,0),4)
+# fit.GENSPC5 <- fitMk(tree=agam.tree, x=genspec, model=gen.spc5); plot(fit.GENSPC5,width=T,color=T); AIC(fit.GENSPC5)
+# 
+# # this matches exactly what we see in the data but with 2 rates
+# gen.cust <-matrix(c(0,1,1,1,
+#                     1,0,0,0,
+#                     1,0,0,0,
+#                     1,2,0,0),4)
+# fit.CUST <- fitMk(tree=agam.tree, x=genspec, model=gen.cust); plot(fit.CUST,width=T,color=T); AIC(fit.CUST)
 
-gen.spc4<- matrix(c(0,2,2,2,
-                    1,0,2,2,
-                    1,2,0,2,
-                    1,2,2,0),4)
-fit.GENSPC4 <- fitMk(tree=agam.tree, x=genspec, model=gen.spc4); plot(fit.GENSPC4,width=T,color=T); AIC(fit.GENSPC4)
-
-# this model gives rate estimates equivalent to gen.spc2, so is redundant
-gen.spc5<- matrix(c(0,3,3,3,
-                    1,0,2,2,
-                    1,2,0,2,
-                    1,2,2,0),4)
-fit.GENSPC5 <- fitMk(tree=agam.tree, x=genspec, model=gen.spc5); plot(fit.GENSPC5,width=T,color=T); AIC(fit.GENSPC5)
-
-# this matches exactly what we see in the data
-gen.cust <-matrix(c(0,1,1,1,
+# this matches exactly what we see in the data (single rate)
+# only between generalists and specialists, except terrestrial can go to rock
+gen.rock <-matrix(c(0,1,1,1,
                     1,0,0,0,
                     1,0,0,0,
-                    1,2,0,0),4)
-fit.CUST <- fitMk(tree=agam.tree, x=genspec, model=gen.cust); plot(fit.CUST,width=T,color=T); AIC(fit.CUST)
+                    1,1,0,0),4)
+fit.ROCK <- fitMk(tree=agam.tree, x=genspec, model=gen.rock); plot(fit.ROCK,width=T,color=T); AIC(fit.ROCK)
 
-AIC.df <- AIC(fit.ER, fit.ARD, fit.SYM, fit.GEN, fit.GENSPC2)
-#AIC.df <- AIC(fit.ER, fit.SYM, fit.GEN, fit.GENSYM, fit.GENSPC, fit.GENSPC2, fit.GENSPC3, fit.GENSPC4, fit.GENSPC5)
-AIC.df$W <- aic.w(AIC.df$AIC)
-AIC.df[order(AIC.df$W,decreasing=T),]
 
-### THIS IS EXACTLY WHAT I NEEDED!
-# extract the fit of the best model (here: NJ)
-anc.fit <- ancr(fit.GENSPC2, type="marginal")
+# Compare all models and save the object
+anova.gs <- anova(fit.ER, fit.ARD, fit.SYM, fit.GEN, fit.GENSPC2, fit.ROCK)
+anova.gs$delta <- anova.gs$AIC - min(anova.gs$AIC)
+anova.gs <- anova.gs[order(anova.gs$delta, decreasing=T),]
+
+# Save the results to file
+save(fit.ER, fit.ARD, fit.SYM, fit.GEN, fit.GENSPC2, fit.ROCK,
+     anova.gs, file="Data/ModellingResults_GeneralistSpecialist.RData")
+
+# Estimate Ancestral States under a model-averaging approach
+anc.fit <- ancr(anova.gs, type="marginal")
 plot(anc.fit)
 
 #######################################################################
 
+par(mfrow=c(2,3))
+
 ## create plot
-plot(fit.ER,cex.rates=0.9,width=T)
+plot(fit.ER,cex.rates=0.25,width=T)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.ER),1)),bty="n",cex=1)
 mtext("(a) ER",line=0,adj=0,cex=1)
 
-plot(fit.ARD,cex.rates=0.9,show.zeros=FALSE,width=T)
+plot(fit.ARD,cex.rates=0.25,show.zeros=FALSE,width=T)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.ARD),1)),bty="n",cex=1)
 mtext("(b) ARD",line=0,adj=0,cex=1)
 
-plot(fit.SYM,cex.rates=0.9,show.zeros=FALSE,width=T,color=FALSE)
+plot(fit.SYM,cex.rates=0.25,show.zeros=FALSE,width=T,color=FALSE)
 legend("topleft",legend=paste("AIC =",round(AIC(fit.SYM),1)),bty="n",cex=1)
 mtext("(c) SYM",line=0,adj=0,cex=1)
 
-plot(fit.GENSPC2,cex.rates=0.9,show.zeros=FALSE,width=T,color=FALSE)
-legend("topleft",legend=paste("AIC =",round(AIC(fit.GENSPC2),1)),bty="n",cex=1)
-mtext("(d) GENSPC",line=0,adj=0,cex=1)
+plot(fit.GEN,cex.rates=0.25,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(fit.GEN),1)),bty="n",cex=1)
+mtext("(d) GEN",line=0,adj=0,cex=1)
 
-#######################################################################
+plot(fit.GENSPC2,cex.rates=0.25,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(fit.GENSPC2),1)),bty="n",cex=1)
+mtext("(e) GENSPC",line=0,adj=0,cex=1)
+
+plot(fit.ROCK,cex.rates=0.25,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(fit.ROCK),1)),bty="n",cex=1)
+mtext("(f) ROCK",line=0,adj=0,cex=1)
+
+
 
 
 
@@ -314,87 +351,192 @@ legend(x=0, y=80,
 
 #######################################################################
 
+# NOW LET'S WORK WITH POLYMORPHIC DATA
 
-
+#######################################################################
 
 load("Data/Amphibolurinae_Data.RData")
+
+#######################################################################
 
 # read in the niche breadth data
 niche <- read.csv("Data/Amphibolurinae_Ecology.csv")
 
 # select the niche breadth variable
-poly.state <- niche %>%
+npoly <- niche %>%
   dplyr::filter(Genus_species %in% agam.tree$tip.label) %>%
   #  tibble::column_to_rownames(var="Genus_species") %>%
-  dplyr::select(Genus_species, poly)
-poly.state <- setNames(poly.state$poly, poly.state$Genus_species)
+  dplyr::select(Genus_species, polyalph)
+npoly <- setNames(npoly$polyalph, npoly$Genus_species)
 
-# start with the most basic, an equal rates model for all transitions
-fit.ER <- fitpolyMk(tree=agam.tree, x=poly.state, model="ER"); plot(fit.ER,width=T,zeros=T)
+# switch letters to numbers
+npoly <- gsub("a",0,npoly)
+npoly <- gsub("b",1,npoly)
+npoly <- gsub("c",2,npoly)
+npoly <- gsub("d",3,npoly)
+npoly <- gsub("e",4,npoly)
 
-simmap.trees <- make.simmap(agam.tree,fit.ER$data,model=fit.ER$index.matrix,nsim=10)
+###################################################################
 
-cols<-setNames(colorRampPalette(c("blue","grey","brown","yellow","green","ForestGreen"))(11),
-               colnames(fit$data))
+eqr.unorder <- fitpolyMk(agam.tree, npoly, model="ER"); plot(eqr.unorder)
+eqr.ordered <- fitpolyMk(agam.tree, npoly, model="ER", ordered=T); plot(eqr.ordered)
+two.unorder <- fitpolyMk(agam.tree, npoly, model="transient", ordered=F); plot(two.unorder)
+two.ordered <- fitpolyMk(agam.tree, npoly, model="transient", ordered=T, max.states=5,pi="fitzjohn"); plot(two.ordered)
 
-cols <- setNames(colorRampPalette(RColorBrewer::brewer.pal(11,"RdYlBu"))(63),colnames(fit.ER$data))
-plot(summary(simmap.trees),colors=cols,type="fan",ftype="off")
-legend(x="topleft",legend=colnames(fit.ER$data),pt.cex=2.4,pch=21,
-       pt.bg=cols)
+jump.mat1 <- eqr.unorder$index.matrix
+jump.mat1[1,2:5] <- 1; jump.mat1[2,3:5] <- 1; jump.mat1[3,4:5] <- 1; jump.mat1[4,5] <- 1
+jump.mat1[2:5,1] <- 1; jump.mat1[3:5,2] <- 1; jump.mat1[4:5,3] <- 1; jump.mat1[5,4] <- 1
+eqr.unorder.jump <- fitMk(agam.tree, to.matrix(npoly,colnames(jump.mat1)), model=jump.mat1)
 
-spc.trees<-mergeMappedStates(simmap.trees,fit.ER$states[1:21],"specialist")
-spc.trees<-mergeMappedStates(spc.trees,fit.ER$states[22:63],"generalist")
-cols<-setNames(c("#f06f24","#5acadb"),c("generalist","specialist"))
-plot(summary(spc.trees),colors=cols,type="fan",ftype="off")
-legend(x="topleft",legend=names(cols),pt.cex=2.4,pch=21,
-       pt.bg=cols)
+jump.mat2 <- two.unorder$index.matrix
+jump.mat2[1,2:5] <- 2; jump.mat2[2,3:5] <- 2; jump.mat2[3,4:5] <- 2; jump.mat2[4,5] <- 2
+jump.mat2[2:5,1] <- 1; jump.mat2[3:5,2] <- 1; jump.mat2[4:5,3] <- 1; jump.mat2[5,4] <- 1
+two.unorder.jump <- fitMk(agam.tree, to.matrix(npoly,colnames(jump.mat2)), model=jump.mat2)
 
+jump.mat3 <- eqr.ordered$index.matrix
+jump.mat3[1,5] <- 1; jump.mat3[5,c(1,9)] <- 1; jump.mat3[9,c(5,12)] <- 1; jump.mat3[12,c(9,14)] <- 1; jump.mat3[14,12] <- 1
+eqr.order.jump <- fitMk(agam.tree, to.matrix(npoly,colnames(jump.mat3)), model=jump.mat3)
 
-spc2spc <- fit.ER$index.matrix
-spc2spc[1:63,1:63] <- 1
-spc2spc[1:6, 1:6]  <- 2
-diag(spc2spc) <- 0
+jump.mat4 <- two.ordered$index.matrix
+jump.mat4[1,6]<-2; jump.mat4[6,c(1,10)]<-2; jump.mat4[10,c(6,13)]<-2; jump.mat4[13,c(10,15)]<-2 
+two.order.jump <- fitMk(agam.tree, to.matrix(npoly,colnames(jump.mat4)), model=jump.mat4)
 
+jump.mat5 <- two.ordered$index.matrix
+jump.mat5[6,1] <- 2
+rock.order.jump <- fitMk(agam.tree, to.matrix(npoly,colnames(jump.mat5)), model=jump.mat5)
 
-testo <- fit.TRA$index.matrix
-testa <- fitpolyMk2(tree=agam.tree, x=poly.state, model=spc2spc)
-
-# start with the most basic, an equal rates model for all transitions
-fit.SPC2SPC <- fitpolyMk(tree=agam.tree, x=poly.state, model="ER", max.poly=5); plot(fit.SPC2SPC,width=T,zeros=T)
-
-
-fit.TRA <- fitpolyMk(tree=agam.tree, x=poly.state, model="transient"); plot(fit.TRA,width=T)
-
-tra2 <- fit.TRA$index.matrix
-tra2[1:6,1:6] <- 3
-diag(tra2) <- 0
-
-fit.TRA2 <- fitpolyMk2(tree=agam.tree, x=poly.state, model=tra2); plot(fit.TRA2,width=T)
-
-
-# next allow all the transition rates to be differe
-fit.ARD <- fitMk(tree=agam.tree, x=poly.state, model="ARD"); plot(fit.ARD,width=T,color=T)
-
-# specify a stepwise model where transitions are allowed
-# only between adjacent states, but those transition rates vary
-stepwise <- matrix(c(0,1,0,0,0,
-                     2,0,3,0,0,
-                     0,4,0,5,0,
-                     0,0,6,0,7,
-                     0,0,0,8,0),5)
-fit.STP <- fitMk(tree=agam.tree, x=breadth, model=stepwise); plot(fit.STP,width=T,color=T)
+#jump.mat6 <- two.ordered$index.matrix
+#jump.mat6[1,c(6,10,13,15)] <- 2
+#jump.mat6[c(10,13,15),1] <- 2
+#two.order.norock.jump <- fitMk(agam.tree, to.matrix(npoly,colnames(jump.mat6)), model=jump.mat6)
+#
+#direct.mat <- eqr.ordered$index.matrix
+#direct.mat[1:nrow(direct.mat),1:ncol(direct.mat)] <- 0
+#direct.mat[1,2:5] <- 1
+#direct.mat[2:5,1] <- 1
+#eqr.direct <- fitMk(agam.tree, to.matrix(npoly,colnames(direct.mat)), model=direct.mat)
 
 
+poly.res <- anova(eqr.unorder,
+                  eqr.ordered,
+                  two.unorder,
+                  two.ordered,
+                  eqr.unorder.jump,
+                  two.unorder.jump,
+                  eqr.order.jump,
+                  two.order.jump,
+                  rock.order.jump)
+poly.res$delta <- poly.res$AIC - min(poly.res$AIC)
+poly.res <- poly.res[order(poly.res$delta, decreasing=T),]
 
-plotTree(agam.tree,ftype="off",lwd=1,type="fan")
-X<-strsplit(setNames(as.character(poly.state),names(poly.state)),"+",fixed=TRUE)
-pies<-matrix(0,Ntip(agam.tree),6,dimnames=list(agam.tree$tip.label,
-                                               c("w","r","g","l","h","t")))
+rownames(poly.res[which(poly.res$weight > 0.01),])
+poly.results <- anova(two.ordered, two.order.jump, rock.order.jump)
+poly.results$delta <- poly.results$AIC - min(poly.results$AIC)
+anova.poly <- poly.results[order(poly.results$delta, decreasing=T),]
+
+# Save the results to file
+save(eqr.unorder, eqr.ordered, two.unorder, two.ordered,
+     eqr.unorder.jump, two.unorder.jump,
+     eqr.order.jump, two.order.jump,
+     rock.order.jump,
+     poly.res, anova.poly, file="Data/ModellingResults_Poly.RData")
+
+# Estimate Ancestral States under a model-averaging approach
+anc.fit <- ancr(anova.poly, type="marginal")
+plot(anc.fit)
+
+#######################################################################
+
+# plot the best fitting model
+
+# set colors
+cols <- RColorBrewer::brewer.pal(9, "Spectral")[rev(c(1,3,7,9))]
+node.cex<-apply(anc.fit$ace,1,
+                function(x) if(any(x>0.8)) 0.3 else 0.8)
+# plot tree
+plot(anc.fit,
+     args.plotTree=list(type="arc", arc_height=0.5, fsize=0.3, offset=1, color="grey"), # type="arc"
+     args.nodelabels=list(cex=node.cex),
+     args.tiplabels=list(cex=0.2),
+     legend=F)
+
+#######################################################################
+
+par(mfrow=c(2,4))
+
+## create plot
+plot(eqr.unorder,cex.rates=0.2,width=T)
+legend("topleft",legend=paste("AIC =",round(AIC(eqr.unorder),1)),bty="n",cex=1)
+mtext("(a) eqr.unorder",line=0,adj=0,cex=1)
+
+plot(two.unorder,cex.rates=0.2,show.zeros=FALSE,width=T)
+legend("topleft",legend=paste("AIC =",round(AIC(two.unorder),1)),bty="n",cex=1)
+mtext("(b) two.unorder",line=0,adj=0,cex=1)
+
+plot(eqr.unorder,cex.rates=0.2,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(eqr.unorder.jump),1)),bty="n",cex=1)
+mtext("(c) eqr.unorder.jump",line=0,adj=0,cex=1)
+
+plot(eqr.ordered,cex.rates=0.2,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(eqr.ordered),1)),bty="n",cex=1)
+mtext("(d) eqr.ordered",line=0,adj=0,cex=1)
+
+plot(two.ordered,cex.rates=0.2,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(two.ordered),1)),bty="n",cex=1)
+mtext("(e) two.ordered",line=0,adj=0,cex=1)
+
+plot(two.ordered,cex.rates=0.2,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(two.order.jump),1)),bty="n",cex=1)
+mtext("(f) two.order.jump",line=0,adj=0,cex=1)
+
+plot(two.ordered,cex.rates=0.2,show.zeros=FALSE,width=T,color=FALSE)
+legend("topleft",legend=paste("AIC =",round(AIC(rock.order.jump),1)),bty="n",cex=1)
+mtext("(f) rock.order.jump",line=0,adj=0,cex=1)
+
+
+###################################################################
+
+# Plot the traits at the tips of the tree as split pies
+
+plotTree(agam.tree,ftype="off",lwd=1,type="arc")
+X<-strsplit(setNames(as.character(npoly),names(npoly)),"+",
+            fixed=TRUE)
+pies<-matrix(0,Ntip(agam.tree),5,dimnames=list(agam.tree$tip.label,
+                                          0:4))
+pie.size <- unlist(lapply(X,function(y) length(y)))
+pie.size <- pie.size[match(rownames(pies), names(pie.size))]
+
 for(i in 1:Ntip(agam.tree)) 
   pies[agam.tree$tip.label[i],X[[agam.tree$tip.label[i]]]]<-
   rep(1/length(X[[agam.tree$tip.label[i]]]),
       length(X[[agam.tree$tip.label[i]]]))
-#tiplabels(pie=pies,piecol=c("black","yellow","red","blue","green","pink"),cex=0.35)
-tiplabels(pie=pies,piecol=c("blue","grey","brown","yellow","green","ForestGreen"),cex=0.5)
-legend(x="topleft",legend=c("water","rock","ground","low","high","tree"),pt.cex=2,pch=21,
-       pt.bg=c("blue","grey","brown","yellow","green","ForestGreen"))
+tiplabels(pie=pies,piecol=palette()[1:5],
+          cex=pie.size/6)
+
+legend(x="topleft",legend=0:4,pt.cex=2,pch=21,
+       pt.bg=palette()[1:5])
+
+
+
+###################################################################
+
+# Plot the traits at the tips of the tree in concentric circles
+
+npoly.mat <- strsplit(npoly, "+", fixed = TRUE)
+nm <- matrix(nrow=119,ncol=6,0)
+rownames(nm) <- names(npoly.mat)
+colnames(nm) <- c("0","1","2","3","4","5")
+for(k in 1:length(npoly.mat)){
+  if(length(npoly.mat[k][[1]])==1){nm[k,npoly.mat[k][[1]]]<-1;next}
+  if(length(npoly.mat[k][[1]])>1){
+    for(j in npoly.mat[k][[1]]){
+      nm[k,j] <- 1
+    }
+  }
+  
+}
+nm[c(79,86),6] <- 1 # add the aquatic state in for the Physignathus/Intellagama
+
+plotFanTree.wTraits(agam.tree, nm, type="arc", part=0.5, ftype="off")
+
+##

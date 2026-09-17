@@ -26,7 +26,7 @@ allLSR$Genus <- strex::str_before_first(allLSR$Genus, "_")
 # estimate and visualize the contemporary functional space
 curr.pca <- princomp(allLSR[,1:19], cor=F)
 plot.rotations(pca.obj = curr.pca, plot = T, which.pca = "princomp")
-fs.curr <- funspace::funspace(x = curr.pca, PCs = c(1,2), n_divisions = 300)
+fs.curr <- funspace::funspace(x = curr.pca, PCs = c(1,4), n_divisions = 300)
 #summary(tsg)
 plot(x = fs.curr,
      type = "global",
@@ -35,6 +35,7 @@ plot(x = fs.curr,
      arrows = T, arrows.length = 3, arrows.label.cex = 0.5, 
      pnt = T,
      threshold = 0.95, 
+     xlim = c(-2,2), ylim = c(-0.7,0.7),
      colors = brewer.pal(5, "YlOrRd"))
 # note, the above trait dataframe is just contemporary trait values (observed)
 
@@ -42,15 +43,16 @@ plot(x = fs.curr,
 
 # estimate and visualize the contemporary functional space per genus
 genera <- allLSR$Genus
-fs.genera <- funspace::funspace(x = curr.pca, PCs = c(1,3), n_divisions = 300, group.vec = genera)
+fs.genera <- funspace::funspace(x = curr.pca, PCs = c(1,4), n_divisions = 300, group.vec = genera, threshold=0.95)
 #summary(tsg)
 plot(x = fs.genera,
      type = "groups",
-     quant.plot = T, quant = 0.9,
-     globalContour = T,
+     quant.plot = T, quant = 0.95,
+     globalContour = F,
 #     arrows = T, arrows.length = 3, arrows.label.cex = 0.5, 
-     pnt = T,
+     pnt = F,
      threshold = 0.95, 
+     xlim = c(-2,2), ylim = c(-0.7,0.7),
      colors = brewer.pal(5, "YlOrRd"))
 # note, the above trait dataframe is just contemporary trait values (observed)
 
@@ -58,7 +60,7 @@ plot(x = fs.genera,
 
 # estimate and visualize the contemporary functional space per regime (k=5)
 regime <- allLSR$regimes
-fs.regime <- funspace::funspace(x = curr.pca, PCs = c(1,3), n_divisions = 300, group.vec = regime)
+fs.regime <- funspace::funspace(x = curr.pca, PCs = c(1,4), n_divisions = 300, group.vec = regime)
 #summary(tsg)
 plot(x = fs.regime,
      type = "groups",
@@ -67,19 +69,27 @@ plot(x = fs.regime,
      #     arrows = T, arrows.length = 3, arrows.label.cex = 0.5, 
      pnt = T,
      threshold = 0.95, 
+     xlim = c(-2,2), ylim = c(-0.7,0.7),
      colors = brewer.pal(5, "YlOrRd"))
 # note, the above trait dataframe is just contemporary trait values (observed)
 # a = Ctenophorus/Cryptagama; b = Hypsilurus/Lophosaurus + arboreal allies; c = Amphibolurus + semiarboreal allies; D = Moloch; e = Tympanocryptis
 
 ############################################################################
 
+# combine the extant and estimated ancestral traits together
+
+# isolate traits (exclude Genus, Genus_species)
+LSR.anc <- allLSR[,1:19]
+# combine observed and ancestral traits into a single dataframe
+LSR.anc <- dplyr::bind_rows(LSR.anc, ancestors)
+
 # estimate and visualize the functional space through time
 fs.anc <- funspace.through.time(timeslices = 0.5, phy = agam.tree, trait.df = LSR.anc[,1:19], 
-                           pcs = c(1,2), plot = T, corr = F, smooth = 300, save.img = T, quantile = 0.999, tpd = F)
+                           pcs = c(1,4), plot = T, corr = F, smooth = 300, save.img = T, quantile = 0.999, tpd = F)
 
 # we can also plot just the global contour to show how the adaptive landscape might have moved through time
 funspace.through.time(timeslices = 0.5, phy = agam.tree, trait.df = LSR.anc[,1:19], 
-                      pcs = c(1,2), plot = T, corr = F, smooth = 100, save.img = F, quantile = 0.999, tpd = F)
+                      pcs = c(1,4), plot = T, corr = F, smooth = 100, save.img = F, quantile = 0.999, tpd = F)
 
 
 ############################################################################
